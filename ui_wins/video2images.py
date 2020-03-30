@@ -2,18 +2,20 @@
 
 # Form implementation generated from reading ui file 'video2images.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_Video2Images(object):
     def setupUi(self, Video2Images):
         Video2Images.setObjectName("Video2Images")
-        Video2Images.resize(400, 320)
-        Video2Images.setMinimumSize(QtCore.QSize(400, 320))
-        Video2Images.setMaximumSize(QtCore.QSize(400, 320))
+        Video2Images.resize(400, 400)
+        Video2Images.setMinimumSize(QtCore.QSize(400, 400))
+        Video2Images.setMaximumSize(QtCore.QSize(400, 400))
         self.verticalLayout = QtWidgets.QVBoxLayout(Video2Images)
         self.verticalLayout.setObjectName("verticalLayout")
         self.widget_option = QtWidgets.QWidget(Video2Images)
@@ -113,4 +115,3 @@ class Ui_Video2Images(object):
         self.label_fps.setText(_translate("Video2Images", "fps:"))
         self.button_cancel.setText(_translate("Video2Images", "Cancel"))
         self.button_compute.setText(_translate("Video2Images", "Compute"))
-

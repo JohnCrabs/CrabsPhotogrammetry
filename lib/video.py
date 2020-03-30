@@ -19,10 +19,11 @@ class VideoInfo:
     def set_video_info(self, src):
         self.set_video_path(src)  # Set self.src information (path, dir, dir_name, file_name, suffix)
         video_cap = cv2.VideoCapture(self.src)
-        self.fps = calc_fps_from_video(video_cap)  # Set fps
-        ret, frame = video_cap.read()
-        if ret:
-            self.height, self.width, self.color_bands = frame.shape
+        if video_cap.isOpened():
+            self.fps = calc_fps_from_video(video_cap)  # Set fps
+            ret, frame = video_cap.read()
+            if ret:
+                self.height, self.width, self.color_bands = frame.shape
         video_cap.release()
 
     def set_video_path(self, src):
@@ -115,6 +116,7 @@ class Video:
     def FPS(self):
         return self.info.fps
 
+
 def calc_fps_from_video(video):
     """
     Calculates the fps of a given video.
@@ -130,13 +132,15 @@ def calc_fps_from_video(video):
         # print("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
     # When I run it on Windows 10 fps was always 0.0. For this scenario we calculate the fps by reading
     # the first 180 frames and calculate the needed time (in seconds).
+    ret = False
     if fps == 0:
         num_frames = 180
         start_time = time.time()
         for frame in range(0, num_frames):
-            video.read()
+            ret, frame = video.read()
         end_time = time.time()
-        seconds = end_time - start_time
-        fps = num_frames / seconds
+        if ret:
+            seconds = end_time - start_time
+            fps = num_frames / seconds
     fps = int(round(fps, 1))
     return fps
