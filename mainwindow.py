@@ -254,7 +254,7 @@ class Window:
                                                   caption="Open Directory",
                                                   directory=QDir.homePath(),
                                                   options=self.DIALOG_FLAG | QFileDialog.ShowDirsOnly)
-        print(f_path)
+        # print(f_path)
         if f_path:
             self.ui_video2images.line_edit_export_images_at.setText(f_path)
             self.ui_video2images.button_compute.setEnabled(self.UP)
