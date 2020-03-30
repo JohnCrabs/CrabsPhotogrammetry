@@ -1,5 +1,6 @@
 import sys
 from ui_wins.mainwin import *
+from ui_wins.video2images import *
 
 from PyQt5.Qt import (Qt, QDir, QFileDialog, QListWidgetItem)
 
@@ -61,10 +62,17 @@ class Window:
         # ------------------------
         # Set up the ui
         # ------------------------
+        # *** MAIN_UI *** #
         self.app = QtWidgets.QApplication(sys.argv)
         self.ui_main_win = Ui_MainWindow()
         self.MainWindow = QtWidgets.QMainWindow()
         self.ui_main_win.setupUi(self.MainWindow)
+
+        # *** VIDEO TO IMAGES UI *** #
+        self.ui_video2images = Ui_Video2Images()
+        self.Video2Images = QtWidgets.QDialog()
+        self.ui_video2images.setupUi(self.Video2Images)
+
         # ------------------------
         # Setting up ends here
         # ---------------------------------------------------------------------------------------------------------- #
@@ -80,8 +88,12 @@ class Window:
         self.ui_main_win.button_del_image.clicked.connect(self.image_delete)  # button_del_image
         # *** VIDEO *** #
         self.ui_main_win.actionVideoImport.triggered.connect(self.video_import)  # actionVideoImport
+        self.ui_main_win.actionVideo_to_Images.triggered.connect(self.video2images) # actionVideo_to_Images
         self.ui_main_win.button_add_video.clicked.connect(self.video_import)  # button_add_video
         self.ui_main_win.button_del_video.clicked.connect(self.video_delete)  # button_del_video
+
+        # *** UI_VIDEO_2_IMAGES *** #
+        self.ui_video2images.button_cancel.clicked.connect(self.video2images_cancel)
 
         # ------------------------
         # Actions list ends here
@@ -193,3 +205,9 @@ class Window:
     def video_list_info(self):
         for video in self.video_list:
             video.vid_print_info()
+
+    def video2images(self):
+        self.Video2Images.show()
+
+    def video2images_cancel(self):
+        self.Video2Images.close()

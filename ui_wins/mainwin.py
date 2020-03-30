@@ -2,13 +2,11 @@
 
 # Form implementation generated from reading ui file 'mainwin.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.2
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -44,7 +42,7 @@ class Ui_MainWindow(object):
         self.listImage.setMinimumSize(QtCore.QSize(185, 0))
         self.listImage.setMaximumSize(QtCore.QSize(285, 16777215))
         font = QtGui.QFont()
-        font.setPointSize(7)
+        font.setPointSize(9)
         self.listImage.setFont(font)
         self.listImage.setFrameShape(QtWidgets.QFrame.WinPanel)
         self.listImage.setDragDropMode(QtWidgets.QAbstractItemView.NoDragDrop)
@@ -84,7 +82,7 @@ class Ui_MainWindow(object):
         self.listVideo.setMinimumSize(QtCore.QSize(185, 0))
         self.listVideo.setMaximumSize(QtCore.QSize(285, 16777215))
         font = QtGui.QFont()
-        font.setPointSize(7)
+        font.setPointSize(9)
         self.listVideo.setFont(font)
         self.listVideo.setFrameShape(QtWidgets.QFrame.WinPanel)
         self.listVideo.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -103,7 +101,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.video_button_widget)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 520, 18))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 520, 22))
         self.menubar.setObjectName("menubar")
         self.menuImage = QtWidgets.QMenu(self.menubar)
         self.menuImage.setObjectName("menuImage")
@@ -164,3 +162,4 @@ class Ui_MainWindow(object):
         self.actionImageExport.setText(_translate("MainWindow", "Export"))
         self.actionImage_Viewer.setText(_translate("MainWindow", "Image Viewer"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
+
