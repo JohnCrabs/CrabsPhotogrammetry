@@ -1,5 +1,6 @@
 import os
 import cv2
+import time
 from lib.message_handling import *
 
 
@@ -19,8 +20,6 @@ class VideoInfo:
         self.set_video_path(src)
         video_cap = cv2.VideoCapture(self.src)
         self.fps = calc_fps_from_video(video_cap)
-
-
 
     def set_video_path(self, src):
         self.src = src
@@ -102,5 +101,15 @@ def calc_fps_from_video(video):
     else:
         fps = video.get(cv2.CAP_PROP_FPS)
         # print("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
+
+    if fps == 0:
+        num_frames = 180
+        start_time = time.time()
+        for frame in range(0, num_frames):
+            video.read()
+        end_time = time.time()
+        seconds = end_time - start_time
+        fps = num_frames / seconds
+
     fps = int(round(fps, 1))
     return fps
