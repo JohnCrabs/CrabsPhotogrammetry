@@ -6,6 +6,7 @@ class ImageInfo:
     def __init__(self):
         self.src = ""
         self.dir = ""
+        self.dir_name = ""
         self.name = ""
         self.suffix = ""
         self.width = 0
@@ -13,8 +14,11 @@ class ImageInfo:
         self.color_bands = 1
 
     def set_image_path(self, src):
-        self.src = src
+        self.src = os.path.normpath(src)
         self.dir = os.path.dirname(self.src)
+        dir_name = os.path.normpath(self.dir)
+        dir_name = dir_name.split(os.sep)
+        self.dir_name = dir_name[len(dir_name) - 1]
         basename = os.path.splitext(os.path.basename(self.src))
         self.name = basename[0]
         self.suffix = basename[1]

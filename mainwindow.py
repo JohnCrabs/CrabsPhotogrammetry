@@ -142,12 +142,12 @@ class Window:
                 success = image_tmp.img_import(file)
                 if success:
                     image_tmp.img_print_info()
-                    self.video_list.append(image_tmp)
+                    self.image_list.append(image_tmp)
                     item_name = "../" + image_tmp.info.dir_name + "/" + image_tmp.info.name
                     item_widget = QListWidgetItem(item_name)
                     item_widget.setFlags(item_widget.flags() | QtCore.Qt.ItemIsUserCheckable)
                     item_widget.setCheckState(QtCore.Qt.Checked)
-                    self.ui_main_win.listVideo.addItem(item_widget)
+                    self.ui_main_win.listImage.addItem(item_widget)
 
     def image_delete(self):
         """
