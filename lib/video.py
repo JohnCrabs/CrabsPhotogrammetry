@@ -90,6 +90,8 @@ class Video:
         """
         self.info.print_video_info()
 
+    def FPS(self):
+        return self.info.fps
 
 def calc_fps_from_video(video):
     """

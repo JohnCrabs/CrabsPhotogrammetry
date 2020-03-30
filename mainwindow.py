@@ -88,12 +88,14 @@ class Window:
         self.ui_main_win.button_del_image.clicked.connect(self.image_delete)  # button_del_image
         # *** VIDEO *** #
         self.ui_main_win.actionVideoImport.triggered.connect(self.video_import)  # actionVideoImport
-        self.ui_main_win.actionVideo_to_Images.triggered.connect(self.video2images) # actionVideo_to_Images
+        self.ui_main_win.actionVideo_to_Images.triggered.connect(self.video2images)  # actionVideo_to_Images
         self.ui_main_win.button_add_video.clicked.connect(self.video_import)  # button_add_video
         self.ui_main_win.button_del_video.clicked.connect(self.video_delete)  # button_del_video
 
         # *** UI_VIDEO_2_IMAGES *** #
         self.ui_video2images.button_cancel.clicked.connect(self.video2images_cancel)
+        self.ui_video2images.combo_box_select_video.currentTextChanged.connect(self.video2images_set_fps_for_video)
+        self.ui_video2images.button_export_images_at.clicked.connect(self.video2images_set_export_folder)
 
         # ------------------------
         # Actions list ends here
@@ -203,11 +205,51 @@ class Window:
         self.video_list_info()
 
     def video_list_info(self):
+        """
+        Print the video list info in a console window (for debugging)
+        :return: Nothing
+        """
         for video in self.video_list:
             video.vid_print_info()
 
     def video2images(self):
+        """
+        Open the video2images dialog.
+        :return: Nothing
+        """
+        self.video2images_set_default()
         self.Video2Images.show()
 
+    def video2images_set_default(self):
+        """
+        Set the default parameters for video2images dialog
+        :return: Nothing
+        """
+        item_list_size = self.ui_main_win.listVideo.count()
+        for item_id in range(0, item_list_size):
+            if self.ui_main_win.listVideo.item(item_id).checkState():
+                item_name = self.ui_main_win.listVideo.item(item_id).text()
+                self.ui_video2images.combo_box_select_video.addItem(item_name)
+
+        self.ui_video2images.combo_box_select_video.setCurrentIndex(0)
+        self.video2images_set_fps_for_video()
+
+    def video2images_set_fps_for_video(self):
+        video_name = self.ui_video2images.combo_box_select_video.currentText()
+        item_list_size = self.ui_main_win.listVideo.count()
+        for item_id in range(0, item_list_size):
+            item_name = self.ui_main_win.listVideo.item(item_id).text()
+            if video_name == item_name:
+                fps = self.video_list[item_id].FPS()
+                self.ui_video2images.spin_box_fps.setValue(fps)
+
+    def video2images_set_export_folder(self):
+        pass
+
+    def video2images_clear(self):
+        self.ui_video2images.combo_box_select_video.clear()
+        self.ui_video2images.spin_box_fps.setValue(1)
+
     def video2images_cancel(self):
+        self.video2images_clear()
         self.Video2Images.close()
