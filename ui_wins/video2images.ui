@@ -53,6 +53,9 @@
       </item>
       <item>
        <widget class="QWidget" name="widget_set_output_folder" native="true">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
           <widget class="QLabel" name="label_export_images_at">
@@ -72,13 +75,25 @@
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
              <widget class="QLineEdit" name="line_edit_export_images_at">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="acceptDrops">
+               <bool>true</bool>
+              </property>
               <property name="inputMask">
                <string/>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="button_export_images_at">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="maximumSize">
                <size>
                 <width>40</width>

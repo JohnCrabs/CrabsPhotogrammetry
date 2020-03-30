@@ -23,9 +23,10 @@ class VideoInfo:
         ret, frame = video_cap.read()
         if ret:
             self.height, self.width, self.color_bands = frame.shape
+        video_cap.release()
 
     def set_video_path(self, src):
-        self.src = src
+        self.src = os.path.normpath(src)
         self.dir = os.path.dirname(self.src)
         dir_name = os.path.normpath(self.dir)
         dir_name = dir_name.split(os.sep)
@@ -89,6 +90,27 @@ class Video:
         :return: Nothing
         """
         self.info.print_video_info()
+
+    def video2img(self, export_folder_path, fps=0, scaleFps=1.0, nameIndex=0, imgFormat="jpg"):
+        if fps == 0:
+            fps = self.info.fps
+        fps *= scaleFps
+        video_cap = cv2.VideoCapture(self.info.src)
+        success, frame = video_cap.read()
+        currFrameCounter = 0
+        export_path = export_folder_path
+        export_path = export_path + self.info.name
+        if not os.path.exists(export_path):
+            os.makedirs(export_path)
+        while success:
+            if currFrameCounter % fps == 0:
+                exportFilePath = export_path + "/" + self.info.name + "_%03d." % nameIndex + imgFormat
+                exportFilePath = os.path.normpath(exportFilePath)
+                cv2.imwrite(exportFilePath, frame)  # save frame as JPEG file
+                nameIndex += 1
+            success, frame = video_cap.read()
+            currFrameCounter += 1
+        video_cap.release()
 
     def FPS(self):
         return self.info.fps

@@ -2,7 +2,7 @@ import sys
 from ui_wins.mainwin import *
 from ui_wins.video2images import *
 
-from PyQt5.Qt import (Qt, QDir, QFileDialog, QListWidgetItem)
+from PyQt5.Qt import (Qt, QDir, QFileDialog, QListWidgetItem, QMessageBox, QWidget)
 
 from lib.video import *
 from lib.image import *
@@ -94,6 +94,7 @@ class Window:
 
         # *** UI_VIDEO_2_IMAGES *** #
         self.ui_video2images.button_cancel.clicked.connect(self.video2images_cancel)
+        self.ui_video2images.button_compute.clicked.connect(self.video2images_compute)
         self.ui_video2images.combo_box_select_video.currentTextChanged.connect(self.video2images_set_fps_for_video)
         self.ui_video2images.button_export_images_at.clicked.connect(self.video2images_set_export_folder)
 
@@ -212,6 +213,8 @@ class Window:
         for video in self.video_list:
             video.vid_print_info()
 
+    # *** VIDEO 2 IMAGES *** #
+
     def video2images(self):
         """
         Open the video2images dialog.
@@ -230,6 +233,8 @@ class Window:
             if self.ui_main_win.listVideo.item(item_id).checkState():
                 item_name = self.ui_main_win.listVideo.item(item_id).text()
                 self.ui_video2images.combo_box_select_video.addItem(item_name)
+                self.ui_video2images.line_edit_export_images_at.setEnabled(self.UP)
+                self.ui_video2images.button_export_images_at.setEnabled(self.UP)
 
         self.ui_video2images.combo_box_select_video.setCurrentIndex(0)
         self.video2images_set_fps_for_video()
@@ -244,12 +249,40 @@ class Window:
                 self.ui_video2images.spin_box_fps.setValue(fps)
 
     def video2images_set_export_folder(self):
-        pass
+        file_dialog = QFileDialog()
+        f_path = file_dialog.getExistingDirectory(parent=None,
+                                                  caption="Open Directory",
+                                                  directory=QDir.homePath(),
+                                                  options=self.DIALOG_FLAG | QFileDialog.ShowDirsOnly)
+        print(f_path)
+        if f_path:
+            self.ui_video2images.line_edit_export_images_at.setText(f_path)
+            self.ui_video2images.button_compute.setEnabled(self.UP)
 
     def video2images_clear(self):
         self.ui_video2images.combo_box_select_video.clear()
         self.ui_video2images.spin_box_fps.setValue(1)
+        self.ui_video2images.line_edit_export_images_at.setEnabled(self.DOWN)
+        self.ui_video2images.button_export_images_at.setEnabled(self.DOWN)
+        self.ui_video2images.button_compute.setEnabled(self.DOWN)
 
     def video2images_cancel(self):
         self.video2images_clear()
         self.Video2Images.close()
+
+    def video2images_compute(self):
+        video_name = self.ui_video2images.combo_box_select_video.currentText()
+        export_folder_name = self.ui_video2images.line_edit_export_images_at.text()
+        fps = self.ui_video2images.spin_box_fps.value()
+        export_folder_name += "/"
+        self.video2images_compute_yes(video_name, export_folder_name, fps)
+        message_box_widget = QWidget()
+        QMessageBox.information(message_box_widget, "img2video", "Process finished successfully!")
+
+    def video2images_compute_yes(self, video_name, export_folder_name, fps):
+        item_list_size = self.ui_main_win.listVideo.count()
+        for item_id in range(0, item_list_size):
+            item_name = self.ui_main_win.listVideo.item(item_id).text()
+            if video_name == item_name:
+                self.video_list[item_id].video2img(export_folder_name, fps)
+                break
