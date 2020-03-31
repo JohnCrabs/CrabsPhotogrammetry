@@ -86,6 +86,9 @@ class Window:
         self.ui_main_win.actionImageImport.triggered.connect(self.image_import)  # actionImageImport
         self.ui_main_win.button_add_image.clicked.connect(self.image_import)  # button_add_image
         self.ui_main_win.button_del_image.clicked.connect(self.image_delete)  # button_del_image
+
+        self.ui_main_win.actionApproximate_Interior_Orientation.triggered.connect(self.image_approximate_camera)
+
         # *** VIDEO *** #
         self.ui_main_win.actionVideoImport.triggered.connect(self.video_import)  # actionVideoImport
         self.ui_main_win.actionVideo_to_Images.triggered.connect(self.video2images)  # actionVideo_to_Images
@@ -139,7 +142,7 @@ class Window:
         if f_path:
             for file in f_path:
                 image_tmp = Image()
-                success = image_tmp.img_import(file)
+                success = image_tmp.img_open(file)
                 if success:
                     image_tmp.img_print_info()
                     self.image_list.append(image_tmp)
@@ -148,6 +151,7 @@ class Window:
                     item_widget.setFlags(item_widget.flags() | QtCore.Qt.ItemIsUserCheckable)
                     item_widget.setCheckState(QtCore.Qt.Checked)
                     self.ui_main_win.listImage.addItem(item_widget)
+                    self.ui_main_win.menuCamera_Settings.setEnabled(self.UP)
 
     def image_delete(self):
         """
@@ -165,6 +169,13 @@ class Window:
     def image_list_info(self):
         for image in self.image_list:
             image.img_print_info()
+
+    def image_approximate_camera(self):
+        for image in self.image_list:
+            image.img_approximate_camera_parameters()
+            self.ui_main_win.menuFind_Feature_Points.setEnabled(self.UP)
+            # image.img_print_camera_matrix()
+        # self.image_list[0].img_print_camera_matrix()
 
     # *** VIDEOS *** #
 

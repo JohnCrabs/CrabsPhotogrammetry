@@ -255,10 +255,52 @@
     <property name="title">
      <string>Image</string>
     </property>
+    <widget class="QMenu" name="menuProcessing">
+     <property name="title">
+      <string>Processing</string>
+     </property>
+     <widget class="QMenu" name="menuFind_Feature_Points">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="title">
+       <string>Find Feature Points</string>
+      </property>
+      <addaction name="separator"/>
+      <addaction name="actionSIFT"/>
+      <addaction name="actionSURF"/>
+      <addaction name="actionORB"/>
+      <addaction name="actionAKAZE"/>
+     </widget>
+     <widget class="QMenu" name="menuImage_Matching">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="title">
+       <string>Image Matching</string>
+      </property>
+      <addaction name="actionAll_Images"/>
+      <addaction name="actionFast_Matching"/>
+     </widget>
+     <widget class="QMenu" name="menuCamera_Settings">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="title">
+       <string>Camera Settings</string>
+      </property>
+      <addaction name="actionApproximate_Interior_Orientation"/>
+     </widget>
+     <addaction name="menuCamera_Settings"/>
+     <addaction name="menuFind_Feature_Points"/>
+     <addaction name="menuImage_Matching"/>
+    </widget>
     <addaction name="actionImageImport"/>
     <addaction name="actionImageExport"/>
     <addaction name="separator"/>
     <addaction name="actionImage_Viewer"/>
+    <addaction name="separator"/>
+    <addaction name="menuProcessing"/>
    </widget>
    <widget class="QMenu" name="menuVideo">
     <property name="title">
@@ -313,6 +355,41 @@
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionSIFT">
+   <property name="text">
+    <string>SIFT</string>
+   </property>
+  </action>
+  <action name="actionSURF">
+   <property name="text">
+    <string>SURF</string>
+   </property>
+  </action>
+  <action name="actionORB">
+   <property name="text">
+    <string>ORB</string>
+   </property>
+  </action>
+  <action name="actionAKAZE">
+   <property name="text">
+    <string>AKAZE</string>
+   </property>
+  </action>
+  <action name="actionAll_Images">
+   <property name="text">
+    <string>All Images</string>
+   </property>
+  </action>
+  <action name="actionFast_Matching">
+   <property name="text">
+    <string>Fast Matching</string>
+   </property>
+  </action>
+  <action name="actionApproximate_Interior_Orientation">
+   <property name="text">
+    <string>Approximate Interior Orientation</string>
    </property>
   </action>
  </widget>
