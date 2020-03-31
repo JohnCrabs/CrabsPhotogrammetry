@@ -248,7 +248,7 @@
      <x>0</x>
      <y>0</y>
      <width>520</width>
-     <height>22</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuImage">
@@ -293,6 +293,7 @@
      </widget>
      <addaction name="menuCamera_Settings"/>
      <addaction name="menuFind_Feature_Points"/>
+     <addaction name="actionCreate_Block"/>
      <addaction name="menuImage_Matching"/>
     </widget>
     <addaction name="actionImageImport"/>
@@ -396,6 +397,14 @@
   <action name="actionApproximate_Interior_Orientation">
    <property name="text">
     <string>Approximate Interior Orientation</string>
+   </property>
+  </action>
+  <action name="actionCreate_Block">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Create Block</string>
    </property>
   </action>
  </widget>

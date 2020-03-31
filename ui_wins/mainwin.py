@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file 'mainwin.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -101,7 +103,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.video_button_widget)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 520, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 520, 18))
         self.menubar.setObjectName("menubar")
         self.menuImage = QtWidgets.QMenu(self.menubar)
         self.menuImage.setObjectName("menuImage")
@@ -154,6 +156,9 @@ class Ui_MainWindow(object):
         self.actionFast_Matching.setObjectName("actionFast_Matching")
         self.actionApproximate_Interior_Orientation = QtWidgets.QAction(MainWindow)
         self.actionApproximate_Interior_Orientation.setObjectName("actionApproximate_Interior_Orientation")
+        self.actionCreate_Block = QtWidgets.QAction(MainWindow)
+        self.actionCreate_Block.setEnabled(False)
+        self.actionCreate_Block.setObjectName("actionCreate_Block")
         self.menuFind_Feature_Points.addSeparator()
         self.menuFind_Feature_Points.addAction(self.actionSIFT)
         self.menuFind_Feature_Points.addAction(self.actionSURF)
@@ -164,6 +169,7 @@ class Ui_MainWindow(object):
         self.menuCamera_Settings.addAction(self.actionApproximate_Interior_Orientation)
         self.menuProcessing.addAction(self.menuCamera_Settings.menuAction())
         self.menuProcessing.addAction(self.menuFind_Feature_Points.menuAction())
+        self.menuProcessing.addAction(self.actionCreate_Block)
         self.menuProcessing.addAction(self.menuImage_Matching.menuAction())
         self.menuImage.addAction(self.actionImageImport)
         self.menuImage.addAction(self.actionImageExport)
@@ -213,4 +219,4 @@ class Ui_MainWindow(object):
         self.actionAll_Images.setText(_translate("MainWindow", "All Images"))
         self.actionFast_Matching.setText(_translate("MainWindow", "Fast Matching"))
         self.actionApproximate_Interior_Orientation.setText(_translate("MainWindow", "Approximate Interior Orientation"))
-
+        self.actionCreate_Block.setText(_translate("MainWindow", "Create Block"))

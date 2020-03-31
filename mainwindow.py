@@ -108,6 +108,7 @@ class Window:
         self.ui_main_win.actionSURF.triggered.connect(lambda: self.image_find_feature_points(self.F_SURF))
         self.ui_main_win.actionORB.triggered.connect(lambda: self.image_find_feature_points(self.F_ORB))
         self.ui_main_win.actionAKAZE.triggered.connect(lambda: self.image_find_feature_points(self.F_AKAZE))
+        self.ui_main_win.actionCreate_Block.triggered.connect(self.image_create_block)
 
         # *** SIMPLE IMAGE VIEWER *** #
         self.ui_simple_img_viewer.button_previous.clicked.connect(self.simgv_button_previous)
@@ -165,10 +166,13 @@ class Window:
                                               filter=self.IMG_FILTER,
                                               options=self.DIALOG_FLAG)[0]
         if f_path:
+            img_id_counter = 0
             for file in f_path:
                 image_tmp = Image()
                 success = image_tmp.img_open(file)
                 if success:
+                    image_tmp.img_set_image_id(img_id_counter)
+                    img_id_counter += 1
                     image_tmp.img_print_info()
                     self.image_list.append(image_tmp)
                     item_name = "../" + image_tmp.info.dir_name + "/" + image_tmp.info.name
@@ -189,6 +193,10 @@ class Window:
         for item in item_list:
             self.image_list.pop(self.ui_main_win.listImage.row(item))
             self.ui_main_win.listImage.takeItem(self.ui_main_win.listImage.row(item))
+        image_list_counter = 0
+        for image in self.image_list:
+            image.img_set_image_id(image_list_counter)
+            image_list_counter += 1
         self.image_list_info()
 
     def image_list_info(self):
@@ -211,9 +219,14 @@ class Window:
             self.ui_simple_img_viewer.check_box_draw_keypoints.setEnabled(self.UP)
             self.ui_simple_img_viewer.check_box_draw_keypoints.setChecked(self.DOWN)
             self.draw_kp = self.DOWN
+            self.ui_main_win.actionCreate_Block.setEnabled(self.UP)
         message_box_widget = QWidget()
         QMessageBox.information(message_box_widget, flag,
                                 "Process finished successfully!")
+
+    def image_create_block(self):
+        image_list_tmp = []
+
 
     # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
     def simgv_open(self):

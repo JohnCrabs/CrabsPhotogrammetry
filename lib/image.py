@@ -11,6 +11,7 @@ IMG_AKAZE = "AKAZE"
 
 class ImageInfo:
     def __init__(self):
+        self.id = 0
         self.src = ""
         self.dir = ""
         self.dir_name = ""
@@ -19,6 +20,9 @@ class ImageInfo:
         self.width = 0
         self.height = 0
         self.color_bands = 1
+
+    def set_image_id(self, index_id):
+        self.id = index_id
 
     def set_image_info(self, src):
         self.set_image_path(src)
@@ -48,6 +52,7 @@ class ImageInfo:
 
     def print_image_info(self):
         print("")
+        print("id:", self.id)
         print("full path:", self.src)
         print("directory:", self.dir)
         print("name:", self.name)
@@ -74,6 +79,9 @@ class Image:
         self.info = ImageInfo()
         self.camera = Camera()
         self.feature_points = FeaturePoints()
+
+    def img_set_image_id(self, index_id):
+        self.info.set_image_id(index_id)
 
     def img_open(self, src: str):
         """
