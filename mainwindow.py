@@ -49,6 +49,11 @@ class Window:
         # *** Qt FLAGS *** #
         self.DIALOG_FLAG = QFileDialog.DontUseNativeDialog
         self.Q_ASPECT_RATIO = Qt.KeepAspectRatio
+        # *** FEATURE OPTION FLAG *** #
+        self.F_SIFT = IMG_SIFT
+        self.F_SURF = IMG_SURF
+        self.F_ORB = IMG_ORB
+        self.F_AKAZE = IMG_AKAZE
         # ------------------------
         # Flags Section ends here
         # ---------------------------------------------------------------------------------------------------------- #
@@ -60,6 +65,7 @@ class Window:
         self.image_list = []
 
         self.img_view_index = 0
+        self.draw_kp = self.DOWN
         # ------------------------
         # Class items ends here
         # ---------------------------------------------------------------------------------------------------------- #
@@ -98,10 +104,15 @@ class Window:
         self.ui_main_win.actionImage_Viewer.triggered.connect(self.simgv_open)  # actionImage_Viewer
 
         self.ui_main_win.actionApproximate_Interior_Orientation.triggered.connect(self.image_approximate_camera)
+        self.ui_main_win.actionSIFT.triggered.connect(lambda: self.image_find_feature_points(self.F_SIFT))
+        self.ui_main_win.actionSURF.triggered.connect(lambda: self.image_find_feature_points(self.F_SURF))
+        self.ui_main_win.actionORB.triggered.connect(lambda: self.image_find_feature_points(self.F_ORB))
+        self.ui_main_win.actionAKAZE.triggered.connect(lambda: self.image_find_feature_points(self.F_AKAZE))
 
         # *** SIMPLE IMAGE VIEWER *** #
         self.ui_simple_img_viewer.button_previous.clicked.connect(self.simgv_button_previous)
         self.ui_simple_img_viewer.button_next.clicked.connect(self.simgv_button_next)
+        self.ui_simple_img_viewer.check_box_draw_keypoints.stateChanged.connect(self.simgv_kp_view_check)
 
         # *** VIDEO *** #
         self.ui_main_win.actionVideoImport.triggered.connect(self.video_import)  # actionVideoImport
@@ -190,6 +201,19 @@ class Window:
             self.ui_main_win.menuFind_Feature_Points.setEnabled(self.UP)
             # image.img_print_camera_matrix()
         # self.image_list[0].img_print_camera_matrix()
+        message_box_widget = QWidget()
+        QMessageBox.information(message_box_widget, "Approximate Interior Orientation",
+                                "Process finished successfully!")
+
+    def image_find_feature_points(self, flag):
+        for image in self.image_list:
+            image.img_find_feature_points(flag=flag)
+            self.ui_simple_img_viewer.check_box_draw_keypoints.setEnabled(self.UP)
+            self.ui_simple_img_viewer.check_box_draw_keypoints.setChecked(self.DOWN)
+            self.draw_kp = self.DOWN
+        message_box_widget = QWidget()
+        QMessageBox.information(message_box_widget, flag,
+                                "Process finished successfully!")
 
     # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
     def simgv_open(self):
@@ -206,7 +230,13 @@ class Window:
             self.simgv_load_image_to_viewer(self.img_view_index)
 
     def simgv_load_image_to_viewer(self, index):
-        img_rgb = self.image_list[index].img_get_img_rgb()
+        if self.draw_kp:
+            img_rgb = self.image_list[index].img_get_img_rgb_with_feature_points()
+            feature_point_number = len(self.image_list[index].feature_points.keypoints)
+            self.ui_simple_img_viewer.label_feature_points_number.setText(str(feature_point_number))
+        else:
+            img_rgb = self.image_list[index].img_get_img_rgb()
+            self.ui_simple_img_viewer.label_feature_points_number.clear()
         bytes_per_line = 3 * self.image_list[index].info.width
         q_img = QImage(img_rgb, self.image_list[index].info.width, self.image_list[index].info.height,
                                 bytes_per_line, QImage.Format_RGB888)
@@ -235,6 +265,10 @@ class Window:
 
     def simgv_button_next(self):
         self.img_view_index += 1
+        self.simgv_load_image_to_viewer(self.img_view_index)
+
+    def simgv_kp_view_check(self):
+        self.draw_kp = self.ui_simple_img_viewer.check_box_draw_keypoints.isChecked()
         self.simgv_load_image_to_viewer(self.img_view_index)
 
     # *** VIDEOS *** #

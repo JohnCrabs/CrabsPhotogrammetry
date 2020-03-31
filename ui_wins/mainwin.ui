@@ -358,11 +358,17 @@
    </property>
   </action>
   <action name="actionSIFT">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>SIFT</string>
    </property>
   </action>
   <action name="actionSURF">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>SURF</string>
    </property>

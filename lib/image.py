@@ -3,6 +3,12 @@ import cv2
 from lib.message_handling import *
 from lib.camera import *
 
+IMG_SIFT = "SIFT"
+IMG_SURF = "SURF"
+IMG_ORB = "ORB"
+IMG_AKAZE = "AKAZE"
+
+
 class ImageInfo:
     def __init__(self):
         self.src = ""
@@ -50,11 +56,20 @@ class ImageInfo:
         print("height:", self.height)
         print("color bands:", self.color_bands)
 
+class FeaturePoints:
+    def __init__(self):
+        self.keypoints = []
+        self.descriptors = []
+
+    def set_feature_point_list(self, kp: [], descr: []):
+        self.keypoints = kp
+        self.descriptors = descr
 
 class Image:
     def __init__(self):
         self.info = ImageInfo()
         self.camera = Camera()
+        self.feature_points = FeaturePoints()
 
     def img_open(self, src: str):
         """
@@ -100,3 +115,27 @@ class Image:
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             return img
         return None
+
+    def img_get_img_rgb_with_feature_points(self):
+        img = cv2.imread(self.info.src)
+        if img is not None:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            cv2.drawKeypoints(img, self.feature_points.keypoints, img)
+            return img
+        return None
+
+    def img_find_feature_points(self, flag):
+        if flag == IMG_SIFT:
+            method = cv2.xfeatures2d_SIFT.create()
+        elif flag == IMG_SURF:
+            method = cv2.xfeatures2d_SURF.create()
+        elif flag == IMG_ORB:
+            method = cv2.ORB_create()
+        elif flag == IMG_AKAZE:
+            method = cv2.AKAZE_create()
+        else:
+            method = cv2.ORB_create()
+
+        img = cv2.imread(self.info.src, cv2.IMREAD_GRAYSCALE)
+        kp, descr = method.detectAndCompute(img, None)  # detect and compute keypoints
+        self.feature_points.set_feature_point_list(kp, descr)
