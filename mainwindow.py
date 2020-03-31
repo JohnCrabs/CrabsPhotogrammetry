@@ -3,7 +3,8 @@ from ui_wins.mainwin import *
 from ui_wins.video2images import *
 from ui_wins.simple_image_viewer import *
 
-from PyQt5.Qt import (Qt, QDialog, QDir, QFileDialog, QListWidgetItem, QMessageBox, QWidget, QLabel, QPixmap, QImage)
+from PyQt5.Qt import (Qt, QDialog, QDir, QFileDialog, QListWidgetItem, QMessageBox, QWidget, QLabel, QPixmap, QImage,
+                      QSize)
 
 from lib.video import *
 from lib.image import *
@@ -195,14 +196,18 @@ class Window:
             width = q_img.width()
             height = q_img.height()
         size = QSize(width, height)
-
         pixmap = QPixmap()
         pixmap = pixmap.fromImage(q_img)
-        #pixmap = pixmap.scaled(size, self.Q_ASPECT_RATIO)
-
+        pixmap = pixmap.scaled(size, self.Q_ASPECT_RATIO)
         self.ui_simple_img_viewer.image_view.setPixmap(pixmap)
         self.ui_simple_img_viewer.image_view.show()
 
+        self.ui_simple_img_viewer.button_previous.setEnabled(self.UP)
+        self.ui_simple_img_viewer.button_next.setEnabled(self.UP)
+        if index == 0:
+            self.ui_simple_img_viewer.button_previous.setEnabled(self.DOWN)
+        if index == len(self.image_list) - 1:
+            self.ui_simple_img_viewer.button_next.setEnabled(self.DOWN)
 
     # *** VIDEOS *** #
 

@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>650</height>
+    <width>1100</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>600</width>
-    <height>650</height>
+    <width>1100</width>
+    <height>720</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>600</width>
-    <height>650</height>
+    <width>1100</width>
+    <height>720</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -31,13 +31,13 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>525</height>
+       <height>600</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>525</height>
+       <height>650</height>
       </size>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -45,14 +45,14 @@
        <widget class="QLabel" name="image_view">
         <property name="minimumSize">
          <size>
-          <width>512</width>
+          <width>1024</width>
           <height>512</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>512</width>
-          <height>512</height>
+          <width>1024</width>
+          <height>640</height>
          </size>
         </property>
         <property name="frameShape">
@@ -79,14 +79,14 @@
        <widget class="QWidget" name="widget_next_previous" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="button_previous">
            <property name="text">
             <string>Previous</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_2">
+          <widget class="QPushButton" name="button_next">
            <property name="text">
             <string>Next</string>
            </property>
