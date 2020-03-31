@@ -1,13 +1,17 @@
 import numpy as np
 from lib.message_handling import *
 
-class Camera:
-    fx = 1.0
-    fy = 1.0
-    cx = 0.0
-    cy = 0.0
 
-    mtrx = []
+class Camera:
+
+    def __init__(self):
+        self.fx = 1.0
+        self.fy = 1.0
+        self.cx = 0.0
+        self.cy = 0.0
+
+        self.exist = False
+        self.mtrx = []
 
     def set_camera_parameters(self, f_x: float, f_y: float, c_x: float, c_y: float):
         self.fx = f_x
@@ -31,6 +35,7 @@ class Camera:
         self.cy = height / 2
 
     def set_camera_matrix(self):
+        self.exist = True
         cam_mtrx = ([self.fx, 0, self.cx],
                     [0, self.fy, self.cy],
                     [0, 0, 1])

@@ -56,14 +56,18 @@ class ImageInfo:
         print("height:", self.height)
         print("color bands:", self.color_bands)
 
+
 class FeaturePoints:
     def __init__(self):
+        self.exist = False
         self.keypoints = []
         self.descriptors = []
 
     def set_feature_point_list(self, kp: [], descr: []):
+        self.exist = True
         self.keypoints = kp
         self.descriptors = descr
+
 
 class Image:
     def __init__(self):
