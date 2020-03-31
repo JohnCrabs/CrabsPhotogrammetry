@@ -4,7 +4,7 @@ from ui_wins.video2images import *
 from ui_wins.simple_image_viewer import *
 
 from PyQt5.Qt import (Qt, QDialog, QDir, QFileDialog, QListWidgetItem, QMessageBox, QWidget, QLabel, QPixmap, QImage,
-                      QSize)
+                      QSize, QCheckBox)
 
 from lib.video import *
 from lib.image import *
@@ -226,7 +226,11 @@ class Window:
 
     def image_create_block(self):
         image_list_tmp = []
-
+        image_list_size = len(self.image_list)
+        for index_id in range(0, image_list_size):
+            if self.ui_main_win.listImage.item(index_id).checkState():
+                image_list_tmp.append(self.image_list[index_id])
+        # print(image_list_tmp)
 
     # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
     def simgv_open(self):
