@@ -1,8 +1,9 @@
 import sys
 from ui_wins.mainwin import *
 from ui_wins.video2images import *
+from ui_wins.simple_image_viewer import *
 
-from PyQt5.Qt import (Qt, QDir, QFileDialog, QListWidgetItem, QMessageBox, QWidget)
+from PyQt5.Qt import (Qt, QDialog, QDir, QFileDialog, QListWidgetItem, QMessageBox, QWidget, QLabel, QPixmap, QImage)
 
 from lib.video import *
 from lib.image import *
@@ -70,8 +71,13 @@ class Window:
 
         # *** VIDEO TO IMAGES UI *** #
         self.ui_video2images = Ui_Video2Images()
-        self.Video2Images = QtWidgets.QDialog()
+        self.Video2Images = QDialog()
         self.ui_video2images.setupUi(self.Video2Images)
+
+        # *** SIMPLE IMAGE VIEWER *** #
+        self.ui_simple_img_viewer = Ui_SimpleImageViewer()
+        self.SimpleImageViewer = QDialog()
+        self.ui_simple_img_viewer.setupUi(self.SimpleImageViewer)
 
         # ------------------------
         # Setting up ends here
@@ -86,9 +92,7 @@ class Window:
         self.ui_main_win.actionImageImport.triggered.connect(self.image_import)  # actionImageImport
         self.ui_main_win.button_add_image.clicked.connect(self.image_import)  # button_add_image
         self.ui_main_win.button_del_image.clicked.connect(self.image_delete)  # button_del_image
-
-        self.ui_main_win.actionApproximate_Interior_Orientation.triggered.connect(self.image_approximate_camera)
-
+        self.ui_main_win.actionImage_Viewer.triggered.connect(self.simgv_open)  # actionImage_Viewer
         # *** VIDEO *** #
         self.ui_main_win.actionVideoImport.triggered.connect(self.video_import)  # actionVideoImport
         self.ui_main_win.actionVideo_to_Images.triggered.connect(self.video2images)  # actionVideo_to_Images
@@ -151,7 +155,6 @@ class Window:
                     item_widget.setFlags(item_widget.flags() | QtCore.Qt.ItemIsUserCheckable)
                     item_widget.setCheckState(QtCore.Qt.Checked)
                     self.ui_main_win.listImage.addItem(item_widget)
-                    self.ui_main_win.menuCamera_Settings.setEnabled(self.UP)
 
     def image_delete(self):
         """
@@ -170,12 +173,36 @@ class Window:
         for image in self.image_list:
             image.img_print_info()
 
-    def image_approximate_camera(self):
-        for image in self.image_list:
-            image.img_approximate_camera_parameters()
-            self.ui_main_win.menuFind_Feature_Points.setEnabled(self.UP)
-            # image.img_print_camera_matrix()
-        # self.image_list[0].img_print_camera_matrix()
+    # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
+    def simgv_open(self):
+        self.simgv_open_image()
+        self.SimpleImageViewer.show()
+
+    def simgv_open_image(self):
+        items_selected = self.ui_main_win.listImage.selectedItems()
+        if len(items_selected) > 0:
+            first_selected_index = self.ui_main_win.listImage.row(items_selected[0])
+            self.simgv_load_image_to_viewer(first_selected_index)
+
+    def simgv_load_image_to_viewer(self, index):
+        img_rgb = self.image_list[index].img_get_img_rgb()
+        bytes_per_line = 3 * self.image_list[index].info.width
+        q_img = QImage(img_rgb, self.image_list[index].info.width, self.image_list[index].info.height,
+                                bytes_per_line, QImage.Format_RGB888)
+        width = self.ui_simple_img_viewer.image_view.width()
+        height = self.ui_simple_img_viewer.image_view.height()
+        if q_img.width() < width or q_img.height() < height:
+            width = q_img.width()
+            height = q_img.height()
+        size = QSize(width, height)
+
+        pixmap = QPixmap()
+        pixmap = pixmap.fromImage(q_img)
+        #pixmap = pixmap.scaled(size, self.Q_ASPECT_RATIO)
+
+        self.ui_simple_img_viewer.image_view.setPixmap(pixmap)
+        self.ui_simple_img_viewer.image_view.show()
+
 
     # *** VIDEOS *** #
 

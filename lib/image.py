@@ -93,3 +93,10 @@ class Image:
     def img_print_camera_matrix(self):
         message_print("Camera Info for Image " + self.info.name + ":")
         self.camera.camera_info()
+
+    def img_get_img_rgb(self):
+        img = cv2.imread(self.info.src)
+        if img is not None:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            return img
+        return None
