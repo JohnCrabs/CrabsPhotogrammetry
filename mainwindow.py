@@ -95,6 +95,8 @@ class Window:
         self.ui_main_win.button_del_image.clicked.connect(self.image_delete)  # button_del_image
         self.ui_main_win.actionImage_Viewer.triggered.connect(self.simgv_open)  # actionImage_Viewer
 
+        self.ui_main_win.actionApproximate_Interior_Orientation.triggered.connect(self.image_approximate_camera)
+
         # *** VIDEO *** #
         self.ui_main_win.actionVideoImport.triggered.connect(self.video_import)  # actionVideoImport
         self.ui_main_win.actionVideo_to_Images.triggered.connect(self.video2images)  # actionVideo_to_Images
@@ -175,6 +177,13 @@ class Window:
     def image_list_info(self):
         for image in self.image_list:
             image.img_print_info()
+
+    def image_approximate_camera(self):
+        for image in self.image_list:
+            image.img_approximate_camera_parameters()
+            self.ui_main_win.menuFind_Feature_Points.setEnabled(self.UP)
+            # image.img_print_camera_matrix()
+        # self.image_list[0].img_print_camera_matrix()
 
     # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
     def simgv_open(self):
