@@ -8,6 +8,7 @@ from PyQt5.Qt import (Qt, QDialog, QDir, QFileDialog, QListWidgetItem, QMessageB
 
 from lib.video import *
 from lib.image import *
+from lib.image_block import *
 
 
 class Window:
@@ -63,6 +64,7 @@ class Window:
         # ------------------------
         self.video_list = []
         self.image_list = []
+        self.image_block = ImageBlock()
 
         self.img_view_index = 0
         self.draw_kp = self.DOWN
@@ -231,6 +233,7 @@ class Window:
             if self.ui_main_win.listImage.item(index_id).checkState():
                 image_list_tmp.append(self.image_list[index_id])
         # print(image_list_tmp)
+        self.image_block.b_img_create_image_list(image_list_tmp)
 
     # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
     def simgv_open(self):
