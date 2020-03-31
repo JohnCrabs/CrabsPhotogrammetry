@@ -234,6 +234,10 @@ class Window:
                 image_list_tmp.append(self.image_list[index_id])
         # print(image_list_tmp)
         self.image_block.b_img_create_image_list(image_list_tmp)
+        self.ui_main_win.menuImage_Matching.setEnabled(self.UP)
+        message_box_widget = QWidget()
+        QMessageBox.information(message_box_widget, "Create Block",
+                                "Process finished successfully!")
 
     # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
     def simgv_open(self):
