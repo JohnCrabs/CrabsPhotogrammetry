@@ -2,13 +2,11 @@
 
 # Form implementation generated from reading ui file 'simple_image_viewer.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.2
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_SimpleImageViewer(object):
     def setupUi(self, SimpleImageViewer):
@@ -43,9 +41,11 @@ class Ui_SimpleImageViewer(object):
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.widget_next_previous)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.button_previous = QtWidgets.QPushButton(self.widget_next_previous)
+        self.button_previous.setEnabled(False)
         self.button_previous.setObjectName("button_previous")
         self.horizontalLayout_2.addWidget(self.button_previous)
         self.button_next = QtWidgets.QPushButton(self.widget_next_previous)
+        self.button_next.setEnabled(False)
         self.button_next.setObjectName("button_next")
         self.horizontalLayout_2.addWidget(self.button_next)
         self.horizontalLayout.addWidget(self.widget_next_previous)
@@ -61,4 +61,7 @@ class Ui_SimpleImageViewer(object):
         _translate = QtCore.QCoreApplication.translate
         SimpleImageViewer.setWindowTitle(_translate("SimpleImageViewer", "Simple Image Viewer"))
         self.button_previous.setText(_translate("SimpleImageViewer", "Previous"))
+        self.button_previous.setShortcut(_translate("SimpleImageViewer", "Left"))
         self.button_next.setText(_translate("SimpleImageViewer", "Next"))
+        self.button_next.setShortcut(_translate("SimpleImageViewer", "Right"))
+

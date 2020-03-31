@@ -58,6 +58,8 @@ class Window:
         # ------------------------
         self.video_list = []
         self.image_list = []
+
+        self.img_view_index = 0
         # ------------------------
         # Class items ends here
         # ---------------------------------------------------------------------------------------------------------- #
@@ -96,6 +98,10 @@ class Window:
         self.ui_main_win.actionImage_Viewer.triggered.connect(self.simgv_open)  # actionImage_Viewer
 
         self.ui_main_win.actionApproximate_Interior_Orientation.triggered.connect(self.image_approximate_camera)
+
+        # *** SIMPLE IMAGE VIEWER *** #
+        self.ui_simple_img_viewer.button_previous.clicked.connect(self.simgv_button_previous)
+        self.ui_simple_img_viewer.button_next.clicked.connect(self.simgv_button_next)
 
         # *** VIDEO *** #
         self.ui_main_win.actionVideoImport.triggered.connect(self.video_import)  # actionVideoImport
@@ -193,8 +199,11 @@ class Window:
     def simgv_open_image(self):
         items_selected = self.ui_main_win.listImage.selectedItems()
         if len(items_selected) > 0:
-            first_selected_index = self.ui_main_win.listImage.row(items_selected[0])
-            self.simgv_load_image_to_viewer(first_selected_index)
+            self.img_view_index = self.ui_main_win.listImage.row(items_selected[0])
+            self.simgv_load_image_to_viewer(self.img_view_index)
+        elif len(self.image_list) > 0:
+            self.img_view_index = 0
+            self.simgv_load_image_to_viewer(self.img_view_index)
 
     def simgv_load_image_to_viewer(self, index):
         img_rgb = self.image_list[index].img_get_img_rgb()
@@ -219,6 +228,14 @@ class Window:
             self.ui_simple_img_viewer.button_previous.setEnabled(self.DOWN)
         if index == len(self.image_list) - 1:
             self.ui_simple_img_viewer.button_next.setEnabled(self.DOWN)
+
+    def simgv_button_previous(self):
+        self.img_view_index -= 1
+        self.simgv_load_image_to_viewer(self.img_view_index)
+
+    def simgv_button_next(self):
+        self.img_view_index += 1
+        self.simgv_load_image_to_viewer(self.img_view_index)
 
     # *** VIDEOS *** #
 
