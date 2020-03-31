@@ -94,6 +94,7 @@ class Window:
         self.ui_main_win.button_add_image.clicked.connect(self.image_import)  # button_add_image
         self.ui_main_win.button_del_image.clicked.connect(self.image_delete)  # button_del_image
         self.ui_main_win.actionImage_Viewer.triggered.connect(self.simgv_open)  # actionImage_Viewer
+
         # *** VIDEO *** #
         self.ui_main_win.actionVideoImport.triggered.connect(self.video_import)  # actionVideoImport
         self.ui_main_win.actionVideo_to_Images.triggered.connect(self.video2images)  # actionVideo_to_Images
@@ -156,6 +157,7 @@ class Window:
                     item_widget.setFlags(item_widget.flags() | QtCore.Qt.ItemIsUserCheckable)
                     item_widget.setCheckState(QtCore.Qt.Checked)
                     self.ui_main_win.listImage.addItem(item_widget)
+                    self.ui_main_win.menuCamera_Settings.setEnabled(self.UP)
 
     def image_delete(self):
         """
