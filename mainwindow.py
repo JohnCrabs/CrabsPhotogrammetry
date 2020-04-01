@@ -479,6 +479,10 @@ class Window:
         self.video2images_set_fps_for_video()
 
     def video2images_set_fps_for_video(self):
+        """
+        Set the fps from video 2 images spin box.
+        :return: Nothing
+        """
         video_name = self.ui_video2images.combo_box_select_video.currentText()
         item_list_size = self.ui_main_win.listVideo.count()
         for item_id in range(0, item_list_size):
@@ -488,6 +492,10 @@ class Window:
                 self.ui_video2images.spin_box_fps.setValue(fps)
 
     def video2images_set_export_folder(self):
+        """
+        Set export folder for the video frames.
+        :return: Nothing
+        """
         file_dialog = QFileDialog()
         f_path = file_dialog.getExistingDirectory(parent=None,
                                                   caption="Open Directory",
@@ -499,6 +507,10 @@ class Window:
             self.ui_video2images.button_compute.setEnabled(self.UP)
 
     def video2images_clear(self):
+        """
+        Clear video 2 images window (reset the window)
+        :return: Nothing
+        """
         self.ui_video2images.combo_box_select_video.clear()
         self.ui_video2images.spin_box_fps.setValue(1)
         self.ui_video2images.line_edit_export_images_at.setEnabled(self.DOWN)
@@ -506,10 +518,18 @@ class Window:
         self.ui_video2images.button_compute.setEnabled(self.DOWN)
 
     def video2images_cancel(self):
+        """
+        Clear the video 2 images window and close the window.
+        :return: Nothing
+        """
         self.video2images_clear()
         self.Video2Images.close()
 
     def video2images_compute(self):
+        """
+        Executed when the user press compute and export the video frames to the given folder.
+        :return: Nothing
+        """
         video_name = self.ui_video2images.combo_box_select_video.currentText()
         export_folder_name = self.ui_video2images.line_edit_export_images_at.text()
         fps = self.ui_video2images.spin_box_fps.value()
@@ -519,6 +539,13 @@ class Window:
         QMessageBox.information(message_box_widget, "img2video", "Process finished successfully!")
 
     def video2images_compute_yes(self, video_name, export_folder_name, fps):
+        """
+        Export the frames to the given folder.
+        :param video_name: the name of the video
+        :param export_folder_name: the path to the exported folder
+        :param fps: the number of fps (use it to find the frames to export)
+        :return: Nothing
+        """
         item_list_size = self.ui_main_win.listVideo.count()
         for item_id in range(0, item_list_size):
             item_name = self.ui_main_win.listVideo.item(item_id).text()
