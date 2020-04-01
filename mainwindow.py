@@ -324,10 +324,19 @@ class Window:
 
     # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
     def simgv_open(self):
+        """
+        Open image and then Simple Image Viewer window.
+        :return: Nothing
+        """
         self.simgv_open_image()
         self.SimpleImageViewer.show()
 
     def simgv_open_image(self):
+        """
+        Open the first selected image. If none of the images is selected, then open the first image.
+        If the list has no image, then open the default image viewer.
+        :return: Nothing
+        """
         items_selected = self.ui_main_win.listImage.selectedItems()
         if len(items_selected) > 0:
             self.img_view_index = self.ui_main_win.listImage.row(items_selected[0])
@@ -337,6 +346,12 @@ class Window:
             self.simgv_load_image_to_viewer(self.img_view_index)
 
     def simgv_load_image_to_viewer(self, index):
+        """
+        Load an image to viewer. If the show feature points is checked, then load feature points as well.
+        This option can be done only if the user has run a feature point method first.
+        :param index: index of image to load.
+        :return: Nothing
+        """
         if self.draw_kp:
             img_rgb = self.image_list[index].img_get_img_rgb_with_feature_points()
             feature_point_number = len(self.image_list[index].feature_points.keypoints)
