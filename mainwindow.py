@@ -137,8 +137,8 @@ class Window:
         # ------------------------
         # Main loop and exit app
         # ------------------------
-        self.MainWindow.show()
-        sys.exit(self.app.exec_())
+        self.MainWindow.show()  # Main Loop
+        sys.exit(self.app.exec_())  # Close application
         # ------------------------
         # END OF APPLICATION
         # ---------------------------------------------------------------------------------------------------------- #
@@ -163,53 +163,54 @@ class Window:
         Take the path(s) of one or more images and import them to the application.
         :return: Nothing
         """
-        file_dialog = QFileDialog()
+        file_dialog = QFileDialog()  # Create QFileDialog
+        # Open the file dialog as Open File Names dialog (for image choice)
         f_path = file_dialog.getOpenFileNames(parent=None,
                                               caption="Open Image(s)",
                                               directory=QDir.homePath(),
                                               filter=self.IMG_FILTER,
                                               options=self.DIALOG_FLAG)[0]
-        if f_path:
-            img_id_counter = 0
-            for file in f_path:
-                image_tmp = Image()
-                success = image_tmp.img_open(file)
-                if success:
-                    image_tmp.img_set_image_id(img_id_counter)
-                    img_id_counter += 1
-                    image_tmp.img_print_info()
-                    self.image_list.append(image_tmp)
-                    item_name = "../" + image_tmp.info.dir_name + "/" + image_tmp.info.name
-                    item_widget = QListWidgetItem(item_name)
-                    item_widget.setFlags(item_widget.flags() | QtCore.Qt.ItemIsUserCheckable)
-                    item_widget.setCheckState(QtCore.Qt.Checked)
-                    self.ui_main_win.listImage.addItem(item_widget)
-                    self.ui_main_win.menuCamera_Settings.setEnabled(self.UP)
+        if f_path:  # If user chose at least one image
+            img_id_counter = 0  # Set a counter for id
+            for file in f_path:  # For all paths in f_paths
+                image_tmp = Image()  # Create an Image object
+                success = image_tmp.img_open(file)  # Set image parameters
+                if success:  # If image exists
+                    image_tmp.img_set_image_id(img_id_counter)  # Set image counter
+                    img_id_counter += 1  # increase the counter by 1
+                    # image_tmp.img_print_info()  # print image info for debugging
+                    self.image_list.append(image_tmp)  # Append image to list
+                    item_name = "../" + image_tmp.info.dir_name + "/" + image_tmp.info.name  # Set name for view
+                    item_widget = QListWidgetItem(item_name)  # Append item to window image list
+                    item_widget.setFlags(item_widget.flags() | QtCore.Qt.ItemIsUserCheckable)  # Set it checkable
+                    item_widget.setCheckState(QtCore.Qt.Checked)  # Set it checked
+                    self.ui_main_win.listImage.addItem(item_widget)  # Add item to list
+                    self.ui_main_win.menuCamera_Settings.setEnabled(self.UP)  # Enable Camera menu
 
     def image_delete(self):
         """
         Delete an image from the list
         :return: Nothing
         """
-        item_list = self.ui_main_win.listImage.selectedItems()
-        if not item_list:
-            return
-        for item in item_list:
-            self.image_list.pop(self.ui_main_win.listImage.row(item))
-            self.ui_main_win.listImage.takeItem(self.ui_main_win.listImage.row(item))
-        image_list_counter = 0
-        for image in self.image_list:
-            image.img_set_image_id(image_list_counter)
-            image_list_counter += 1
-        self.image_list_info()
+        item_list = self.ui_main_win.listImage.selectedItems()  # Take all selected indexes
+        if not item_list:  # If nothing is selected
+            return  # return
+        for item in item_list:  # else for each selected item
+            self.image_list.pop(self.ui_main_win.listImage.row(item))  # delete the item from python image_list
+            self.ui_main_win.listImage.takeItem(self.ui_main_win.listImage.row(item))  # delete it from Qt image list
+        image_list_counter = 0  # set image id counter to 0
+        for image in self.image_list:  # for each image in image list
+            image.img_set_image_id(image_list_counter)  # set new id
+            image_list_counter += 1  # increase the counter by 1
+        # self.image_list_info()  # show new image info list for debugging
 
     def image_list_info(self):
         """
         Print to console the information of images in the list.
         :return: Nothing
         """
-        for image in self.image_list:
-            image.img_print_info()
+        for image in self.image_list:  # for each image in image list
+            image.img_print_info()  # print image info to the console
 
     def image_default_approximate_camera_checked(self):
         """
@@ -223,18 +224,19 @@ class Window:
         Approximate the camera interior orientation for each image in image list.
         :return: Nothing
         """
-        success = False
-        for image in self.image_list:
-            success = True
-            image.img_approximate_camera_parameters()
-            # image.img_print_camera_matrix()
-        # self.image_list[0].img_print_camera_matrix()
-        if success:
-            self.ui_main_win.menuFind_Feature_Points.setEnabled(self.UP)
+        success = False  # set success boolean to false
+        for image in self.image_list:  # for each image in image list
+            success = True  # set success to True (this means there are images in the list)
+            image.img_approximate_camera_parameters()  # approximate camera parameters
+            # image.img_print_camera_matrix()  # print camera matrix for debugging
+        # self.image_list[0].img_print_camera_matrix()  # print the camera matrix only for the first image (debugging)
+        if success:  # if success = True
+            self.ui_main_win.menuFind_Feature_Points.setEnabled(self.UP)  # enable menu find feature points
+            # check action approximate interior orientation
             self.ui_main_win.actionApproximate_Interior_Orientation.setChecked(self.UP)
-            message_box_widget = QWidget()
+            message_box_widget = QWidget()  # create QWidget
             QMessageBox.information(message_box_widget, "Approximate Interior Orientation",
-                                    "Process finished successfully!")
+                                    "Process finished successfully!")  # information message
 
     def image_default_find_feature_points_checked(self):
         """
@@ -253,24 +255,26 @@ class Window:
         :param flag: IMG_SIFT, IMG_SURF, IMG_ORB, IMG_AKAZE
         :return: Nothing
         """
-        success = False
-        for image in self.image_list:
-            success = True
-            image.img_find_feature_points(flag=flag)
-        if success:
-            self.image_default_find_feature_points_checked()
+        success = False  # Set success to False
+        for image in self.image_list:  # For each image in image list
+            success = True  # Set success to True (this means there are images in list)
+            image.img_find_feature_points(flag=flag)  # find feature points using the specified flag
+        if success:  # if success = True
+            self.image_default_find_feature_points_checked()  # reset the find feature checked
+            # reset the default create block (do this because this function doesnt recreate the block). The block needs
+            # to be recreated after find feature points action for updated results.
             self.image_default_create_block_checked()
-            if flag == self.F_AKAZE:
-                self.ui_main_win.actionAKAZE.setChecked(self.UP)
-            elif flag == self.F_ORB:
-                self.ui_main_win.actionORB.setChecked(self.UP)
-            self.ui_simple_img_viewer.check_box_draw_keypoints.setEnabled(self.UP)
-            self.ui_simple_img_viewer.check_box_draw_keypoints.setChecked(self.DOWN)
-            self.draw_kp = self.DOWN
-            self.ui_main_win.actionCreate_Block.setEnabled(self.UP)
-            message_box_widget = QWidget()
+            if flag == self.F_AKAZE:  # if flag AKAZE
+                self.ui_main_win.actionAKAZE.setChecked(self.UP)  # find feature points using akaze method
+            elif flag == self.F_ORB:  # if flag ORB
+                self.ui_main_win.actionORB.setChecked(self.UP)  # find feature points using orb method
+            self.ui_simple_img_viewer.check_box_draw_keypoints.setEnabled(self.UP)  # enable draw keypoints to simgv
+            self.ui_simple_img_viewer.check_box_draw_keypoints.setChecked(self.DOWN)  # uncheck it
+            self.draw_kp = self.DOWN  # set the draw kp boolean to uncheck (use this for code readability)
+            self.ui_main_win.actionCreate_Block.setEnabled(self.UP)  # enable action Create Block
+            message_box_widget = QWidget()  # Create QWidget
             QMessageBox.information(message_box_widget, flag,
-                                    "Process finished successfully!")
+                                    "Process finished successfully!")  # message information
 
     def image_default_create_block_checked(self):
         """
