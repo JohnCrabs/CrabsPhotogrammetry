@@ -288,24 +288,24 @@ class Window:
         Create a block of images for all checked images in image list.
         :return: Nothing
         """
-        image_list_tmp = []
-        image_list_size = len(self.image_list)
-        success = False
-        counter = 0
-        for index_id in range(0, image_list_size):
-            if self.ui_main_win.listImage.item(index_id).checkState():
-                counter += 1
-                if counter > 1:
-                    success = True
-                image_list_tmp.append(self.image_list[index_id])
-        # print(image_list_tmp)
-        if success:
-            self.ui_main_win.actionCreate_Block.setChecked(self.UP)
-            self.image_block.b_img_create_image_list(image_list_tmp)
-            self.ui_main_win.menuImage_Matching.setEnabled(self.UP)
-            message_box_widget = QWidget()
+        image_list_tmp = []  # create a temporary image list
+        image_list_size = len(self.image_list)  # take the size of the actual list
+        success = False  # set success boolean to False
+        counter = 0  # set image in image_list_tmp counter to 0
+        for index_id in range(0, image_list_size):  # for index id in range(0, list_size)
+            if self.ui_main_win.listImage.item(index_id).checkState():  # check the image item state (if true)
+                counter += 1  # increase the counter
+                if counter > 1:  # a block needs at least 2 images (if counter > 1)
+                    success = True  # set success to True
+                image_list_tmp.append(self.image_list[index_id])  # append the image from image list to tmp image list
+        # print(image_list_tmp)  # print image list for debugging
+        if success:  # if success = True
+            self.ui_main_win.actionCreate_Block.setChecked(self.UP)  # check Create Block
+            self.image_block.b_img_create_image_list(image_list_tmp)  # set the image block
+            self.ui_main_win.menuImage_Matching.setEnabled(self.UP)  # enable menu Image Matching
+            message_box_widget = QWidget()  # create QWidget
             QMessageBox.information(message_box_widget, "Create Block",
-                                    "Process finished successfully!")
+                                    "Process finished successfully!")  # message information
 
     def image_default_matching(self):
         """
@@ -341,13 +341,13 @@ class Window:
         If the list has no image, then open the default image viewer.
         :return: Nothing
         """
-        items_selected = self.ui_main_win.listImage.selectedItems()
-        if len(items_selected) > 0:
-            self.img_view_index = self.ui_main_win.listImage.row(items_selected[0])
-            self.simgv_load_image_to_viewer(self.img_view_index)
-        elif len(self.image_list) > 0:
-            self.img_view_index = 0
-            self.simgv_load_image_to_viewer(self.img_view_index)
+        items_selected = self.ui_main_win.listImage.selectedItems()  # take all selected items
+        if len(items_selected) > 0:  # if there is at least one item selected
+            self.img_view_index = self.ui_main_win.listImage.row(items_selected[0])  # take the first selected item
+            self.simgv_load_image_to_viewer(self.img_view_index)  # load it to viewer
+        elif len(self.image_list) > 0:  # else if there are no selected items, but there are images imported
+            self.img_view_index = 0  # set the view index to the first image in the least
+            self.simgv_load_image_to_viewer(self.img_view_index)  # load the first image to the viewer
 
     def simgv_load_image_to_viewer(self, index):
         """
@@ -390,24 +390,24 @@ class Window:
         Set the image index to -1 (if index is greater than 0) and load that image to viewer.
         :return: Nothing
         """
-        self.img_view_index -= 1
-        self.simgv_load_image_to_viewer(self.img_view_index)
+        self.img_view_index -= 1  # decrease the image view index by 1
+        self.simgv_load_image_to_viewer(self.img_view_index)  # load that image to viewer
 
     def simgv_button_next(self):
         """
         Set the image index to +1 (if index is greater than 0) and load that image to viewer.
         :return: Nothing
         """
-        self.img_view_index += 1
-        self.simgv_load_image_to_viewer(self.img_view_index)
+        self.img_view_index += 1  # increase the image view index by 1
+        self.simgv_load_image_to_viewer(self.img_view_index)  # load that image to viewer
 
     def simgv_kp_view_check(self):
         """
         Check if feature points checkbox is checked and load the correct image
         :return: Nothing
         """
-        self.draw_kp = self.ui_simple_img_viewer.check_box_draw_keypoints.isChecked()
-        self.simgv_load_image_to_viewer(self.img_view_index)
+        self.draw_kp = self.ui_simple_img_viewer.check_box_draw_keypoints.isChecked()  # take the checked boolean value
+        self.simgv_load_image_to_viewer(self.img_view_index)  # load the image to viewer
 
     # *** VIDEOS *** #
 
