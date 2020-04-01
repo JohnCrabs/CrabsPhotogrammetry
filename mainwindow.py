@@ -207,6 +207,9 @@ class Window:
         for image in self.image_list:
             image.img_print_info()
 
+    def image_default_approximate_camera_checked(self):
+        self.ui_main_win.actionApproximate_Interior_Orientation.setChecked(self.DOWN)
+
     def image_approximate_camera(self):
         success = False
         for image in self.image_list:
@@ -221,12 +224,19 @@ class Window:
             QMessageBox.information(message_box_widget, "Approximate Interior Orientation",
                                     "Process finished successfully!")
 
+    def image_default_find_feature_points_checked(self):
+        self.ui_main_win.actionSIFT.setChecked(self.DOWN)
+        self.ui_main_win.actionSURF.setChecked(self.DOWN)
+        self.ui_main_win.actionORB.setChecked(self.DOWN)
+        self.ui_main_win.actionAKAZE.setChecked(self.DOWN)
+
     def image_find_feature_points(self, flag):
         success = False
         for image in self.image_list:
             success = True
             image.img_find_feature_points(flag=flag)
         if success:
+            self.image_default_find_feature_points_checked()
             if flag == self.F_AKAZE:
                 self.ui_main_win.actionAKAZE.setChecked(self.UP)
             elif flag == self.F_ORB:
@@ -238,6 +248,9 @@ class Window:
             message_box_widget = QWidget()
             QMessageBox.information(message_box_widget, flag,
                                     "Process finished successfully!")
+
+    def image_default_create_block_checked(self):
+        pass
 
     def image_create_block(self):
         image_list_tmp = []
