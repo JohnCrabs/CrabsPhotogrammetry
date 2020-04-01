@@ -212,9 +212,17 @@ class Window:
             image.img_print_info()
 
     def image_default_approximate_camera_checked(self):
+        """
+        Reset action Approximate Interior Orientation
+        :return: Nothing
+        """
         self.ui_main_win.actionApproximate_Interior_Orientation.setChecked(self.DOWN)
 
     def image_approximate_camera(self):
+        """
+        Approximate the camera interior orientation for each image in image list.
+        :return: Nothing
+        """
         success = False
         for image in self.image_list:
             success = True
@@ -229,12 +237,22 @@ class Window:
                                     "Process finished successfully!")
 
     def image_default_find_feature_points_checked(self):
+        """
+        Reset the actions SIFT, SURF, ORB and AKAZE.
+        :return: Nothing
+        """
         self.ui_main_win.actionSIFT.setChecked(self.DOWN)
         self.ui_main_win.actionSURF.setChecked(self.DOWN)
         self.ui_main_win.actionORB.setChecked(self.DOWN)
         self.ui_main_win.actionAKAZE.setChecked(self.DOWN)
 
-    def image_find_feature_points(self, flag):
+    def image_find_feature_points(self, flag=IMG_AKAZE):
+        """
+        Use the appropriate flag and find the feature points for each image in the list.
+        It takes a while to calculate for big images.
+        :param flag: IMG_SIFT, IMG_SURF, IMG_ORB, IMG_AKAZE
+        :return: Nothing
+        """
         success = False
         for image in self.image_list:
             success = True
@@ -255,9 +273,17 @@ class Window:
                                     "Process finished successfully!")
 
     def image_default_create_block_checked(self):
+        """
+        Reset the action Create Block.
+        :return: Nothing
+        """
         self.ui_main_win.actionCreate_Block.setChecked(self.DOWN)
 
     def image_create_block(self):
+        """
+        Create a block of images for all checked images in image list.
+        :return: Nothing
+        """
         image_list_tmp = []
         image_list_size = len(self.image_list)
         success = False
@@ -278,10 +304,19 @@ class Window:
                                     "Process finished successfully!")
 
     def image_default_matching(self):
+        """
+        Reset actions All Images Matching and Fast Matching
+        :return: Nothing
+        """
         self.ui_main_win.actionAll_Images_Matching.setChecked(self.DOWN)
         self.ui_main_win.actionFast_Matching.setChecked(self.DOWN)
 
     def image_matching(self, fast=False):
+        """
+        If fast=True run fast matching method. Else run block matching method (match all images).
+        :param fast: True/False
+        :return: Nothing
+        """
         if fast:
             print("fast method")
         else:
