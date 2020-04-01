@@ -204,6 +204,10 @@ class Window:
         self.image_list_info()
 
     def image_list_info(self):
+        """
+        Print to console the information of images in the list.
+        :return: Nothing
+        """
         for image in self.image_list:
             image.img_print_info()
 
