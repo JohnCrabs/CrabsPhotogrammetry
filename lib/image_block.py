@@ -11,6 +11,7 @@ class ImageMatches:
         self.f_pts_R = []
         self.f_pts_indexes_L = []
         self.f_pts_indexes_R = []
+        self.f_index_tab = []
         self.colors = []
         self.is_good = False
 
@@ -40,22 +41,21 @@ class ImageMatches:
         self.f_pts_indexes_R = g_matches_id_R
         self.colors = colors
         self.is_good = is_good
+        self.create_index_table()
 
     def create_index_table(self):
         """
         Create an index table with the id list of images.
         :return: Nothing
         """
-        index_tab = []
         for id_index in range(0, len(self.f_pts_indexes_L)):
             index_tab_tmp = []
             id_L = self.f_pts_indexes_L[id_index]
             id_R = self.f_pts_indexes_R[id_index]
             index_tab_tmp.append(id_L)
             index_tab_tmp.append(id_R)
-            index_tab.append(index_tab_tmp)
-        index_tab = np.array(index_tab)
-        return index_tab
+            self.f_index_tab.append(index_tab_tmp)
+        self.f_index_tab = np.array(self.f_index_tab)
 
     def export_id_csv(self, path: str):
         """
@@ -72,6 +72,12 @@ class ImageMatches:
         # print(id_list)
         np.savetxt(path, id_list, delimiter=",", fmt='%d')
 
+    def INDEX_TABLE(self):
+        """
+        Return index table
+        :return: self.f_index_tab
+        """
+        return self.f_index_tab
 
 class ImageBlock:
     def __init__(self):
