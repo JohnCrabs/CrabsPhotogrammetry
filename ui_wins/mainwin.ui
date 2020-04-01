@@ -266,7 +266,6 @@
       <property name="title">
        <string>Find Feature Points</string>
       </property>
-      <addaction name="separator"/>
       <addaction name="actionSIFT"/>
       <addaction name="actionSURF"/>
       <addaction name="actionORB"/>
@@ -279,7 +278,7 @@
       <property name="title">
        <string>Image Matching</string>
       </property>
-      <addaction name="actionAll_Images"/>
+      <addaction name="actionAll_Images_Matching"/>
       <addaction name="actionFast_Matching"/>
      </widget>
      <widget class="QMenu" name="menuCamera_Settings">
@@ -359,6 +358,9 @@
    </property>
   </action>
   <action name="actionSIFT">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -367,6 +369,9 @@
    </property>
   </action>
   <action name="actionSURF">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -375,31 +380,49 @@
    </property>
   </action>
   <action name="actionORB">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>ORB</string>
    </property>
   </action>
   <action name="actionAKAZE">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>AKAZE</string>
    </property>
   </action>
-  <action name="actionAll_Images">
+  <action name="actionAll_Images_Matching">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>All Images</string>
    </property>
   </action>
   <action name="actionFast_Matching">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Fast Matching</string>
    </property>
   </action>
   <action name="actionApproximate_Interior_Orientation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Approximate Interior Orientation</string>
    </property>
   </action>
   <action name="actionCreate_Block">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="enabled">
     <bool>false</bool>
    </property>

@@ -111,6 +111,8 @@ class Window:
         self.ui_main_win.actionORB.triggered.connect(lambda: self.image_find_feature_points(self.F_ORB))
         self.ui_main_win.actionAKAZE.triggered.connect(lambda: self.image_find_feature_points(self.F_AKAZE))
         self.ui_main_win.actionCreate_Block.triggered.connect(self.image_create_block)
+        self.ui_main_win.actionAll_Images_Matching.triggered.connect(lambda: self.image_matching(fast=False))
+        self.ui_main_win.actionFast_Matching.triggered.connect(lambda: self.image_matching(fast=True))
 
         # *** SIMPLE IMAGE VIEWER *** #
         self.ui_simple_img_viewer.button_previous.clicked.connect(self.simgv_button_previous)
@@ -206,38 +208,62 @@ class Window:
             image.img_print_info()
 
     def image_approximate_camera(self):
+        success = False
         for image in self.image_list:
+            success = True
             image.img_approximate_camera_parameters()
-            self.ui_main_win.menuFind_Feature_Points.setEnabled(self.UP)
             # image.img_print_camera_matrix()
         # self.image_list[0].img_print_camera_matrix()
-        message_box_widget = QWidget()
-        QMessageBox.information(message_box_widget, "Approximate Interior Orientation",
-                                "Process finished successfully!")
+        if success:
+            self.ui_main_win.menuFind_Feature_Points.setEnabled(self.UP)
+            self.ui_main_win.actionApproximate_Interior_Orientation.setChecked(self.UP)
+            message_box_widget = QWidget()
+            QMessageBox.information(message_box_widget, "Approximate Interior Orientation",
+                                    "Process finished successfully!")
 
     def image_find_feature_points(self, flag):
+        success = False
         for image in self.image_list:
+            success = True
             image.img_find_feature_points(flag=flag)
+        if success:
+            if flag == self.F_AKAZE:
+                self.ui_main_win.actionAKAZE.setChecked(self.UP)
+            elif flag == self.F_ORB:
+                self.ui_main_win.actionORB.setChecked(self.UP)
             self.ui_simple_img_viewer.check_box_draw_keypoints.setEnabled(self.UP)
             self.ui_simple_img_viewer.check_box_draw_keypoints.setChecked(self.DOWN)
             self.draw_kp = self.DOWN
             self.ui_main_win.actionCreate_Block.setEnabled(self.UP)
-        message_box_widget = QWidget()
-        QMessageBox.information(message_box_widget, flag,
-                                "Process finished successfully!")
+            message_box_widget = QWidget()
+            QMessageBox.information(message_box_widget, flag,
+                                    "Process finished successfully!")
 
     def image_create_block(self):
         image_list_tmp = []
         image_list_size = len(self.image_list)
+        success = False
+        counter = 0
         for index_id in range(0, image_list_size):
             if self.ui_main_win.listImage.item(index_id).checkState():
+                counter += 1
+                if counter > 1:
+                    success = True
                 image_list_tmp.append(self.image_list[index_id])
         # print(image_list_tmp)
-        self.image_block.b_img_create_image_list(image_list_tmp)
-        self.ui_main_win.menuImage_Matching.setEnabled(self.UP)
-        message_box_widget = QWidget()
-        QMessageBox.information(message_box_widget, "Create Block",
-                                "Process finished successfully!")
+        if success:
+            self.ui_main_win.actionCreate_Block.setChecked(self.UP)
+            self.image_block.b_img_create_image_list(image_list_tmp)
+            self.ui_main_win.menuImage_Matching.setEnabled(self.UP)
+            message_box_widget = QWidget()
+            QMessageBox.information(message_box_widget, "Create Block",
+                                    "Process finished successfully!")
+
+    def image_matching(self, fast=False):
+        if fast:
+            print("fast method")
+        else:
+            print("All Images")
 
     # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
     def simgv_open(self):
