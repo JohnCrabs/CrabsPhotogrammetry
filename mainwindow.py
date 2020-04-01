@@ -382,14 +382,26 @@ class Window:
             self.ui_simple_img_viewer.button_next.setEnabled(self.DOWN)
 
     def simgv_button_previous(self):
+        """
+        Set the image index to -1 (if index is greater than 0) and load that image to viewer.
+        :return: Nothing
+        """
         self.img_view_index -= 1
         self.simgv_load_image_to_viewer(self.img_view_index)
 
     def simgv_button_next(self):
+        """
+        Set the image index to +1 (if index is greater than 0) and load that image to viewer.
+        :return: Nothing
+        """
         self.img_view_index += 1
         self.simgv_load_image_to_viewer(self.img_view_index)
 
     def simgv_kp_view_check(self):
+        """
+        Check if feature points checkbox is checked and load the correct image
+        :return: Nothing
+        """
         self.draw_kp = self.ui_simple_img_viewer.check_box_draw_keypoints.isChecked()
         self.simgv_load_image_to_viewer(self.img_view_index)
 
