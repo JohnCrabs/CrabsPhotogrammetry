@@ -237,6 +237,7 @@ class Window:
             image.img_find_feature_points(flag=flag)
         if success:
             self.image_default_find_feature_points_checked()
+            self.image_default_create_block_checked()
             if flag == self.F_AKAZE:
                 self.ui_main_win.actionAKAZE.setChecked(self.UP)
             elif flag == self.F_ORB:
@@ -250,7 +251,7 @@ class Window:
                                     "Process finished successfully!")
 
     def image_default_create_block_checked(self):
-        pass
+        self.ui_main_win.actionCreate_Block.setChecked(self.DOWN)
 
     def image_create_block(self):
         image_list_tmp = []
@@ -271,6 +272,10 @@ class Window:
             message_box_widget = QWidget()
             QMessageBox.information(message_box_widget, "Create Block",
                                     "Process finished successfully!")
+
+    def image_default_matching(self):
+        self.ui_main_win.actionAll_Images_Matching.setChecked(self.DOWN)
+        self.ui_main_win.actionFast_Matching.setChecked(self.DOWN)
 
     def image_matching(self, fast=False):
         if fast:
