@@ -384,10 +384,7 @@ class ImageBlock:
         self.img_matches = []  # A list of ImageMatches class items (store all matching information)
         self.block_match_list = []  # A list which contains all id matches
 
-
-
     # *** IMAGE LIST *** #
-
     def b_img_create_image_list(self, img_list):
         """
         Create the image list.
