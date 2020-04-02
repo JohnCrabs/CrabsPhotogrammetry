@@ -1,5 +1,6 @@
 from lib.image import *
 from lib.global_functions import *
+from lib.point import *
 
 LOWE_RATIO = 0.9
 INLIER_RATIO = 0.3
@@ -458,17 +459,20 @@ class ImageBlock:
                         #print(poseMask[l_index]) # Uncomment for debugging
                         #print(l_index)  # Uncomment for debugging
 
-                        pt3d = Point3d()
+                        pt3d = Point3d_float()  # Create a Point3d_float() object
 
-                        pt3d.x = points4D[0][l_index] / points4D[3][l_index]
-                        pt3d.y = points4D[1][l_index] / points4D[3][l_index]
-                        pt3d.z = points4D[2][l_index] / points4D[3][l_index]
+                        # I chose to use this way rathen than my build in set_point(x,y,z) function
+                        # for code reading simplicity.
+                        pt3d.x = points4D[0][l_index] / points4D[3][l_index]  # Set x value
+                        pt3d.y = points4D[1][l_index] / points4D[3][l_index]  # Set y value
+                        pt3d.z = points4D[2][l_index] / points4D[3][l_index]  # Set z value
 
-                        # OpenCV images are in BGR system so b=0, g=1, r=2
-                        r = colors[l_index][0]
-                        g = colors[l_index][1]
-                        b = colors[l_index][2]
+                        # Find the color of the point
+                        r = colors[l_index][0]  # Take the red value for this point
+                        g = colors[l_index][1]  # Take the green value for this point
+                        b = colors[l_index][2]  # Take the blue value for this point
                         # print(r, g, b)
+                        # ---------------------------------------------------------------------------- #
                         l_pnt = Landmark()
                         l_pnt.set_landmark(landmarkCounter, pt3d.x, pt3d.y, pt3d.z, 1, r, g, b)
                         l_pnt.set_match_id_list(pts_inlier_L_id[l_index], pts_inlier_R_id[l_index])
