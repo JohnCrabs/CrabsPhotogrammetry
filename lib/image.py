@@ -77,11 +77,78 @@ class FeaturePoints:
             self.kp_ids.append(i)
 
 
+class PoseMatrix:
+    R: []
+    t: []
+
+    T_mtrx: []
+
+    def set_starting_pose_matrix(self):
+        T = [[1.0, 0.0, 0.0, 0.0],
+             [0.0, 1.0, 0.0, 0.0],
+             [0.0, 0.0, 1.0, 0.0],
+             [0.0, 0.0, 0.0, 1.0]]
+        self.T_mtrx = np.array(T)
+
+    def take_R_and_t(self):
+        R = self.T_mtrx[:3, :3]
+        t = self.T_mtrx[:3, 3:]
+        return R, t
+
+    def setPoseMatrix_R_t(self, R, t):
+        Rt = []
+        Rt.append(R)
+        Rt.append(t)
+        Rt = np.concatenate(Rt, axis=1)
+
+        poseMtrx = []
+        poseMtrx.append(Rt)
+        poseMtrx.append([[0.0, 0.0, 0.0, 1.0]])
+        poseMtrx = np.concatenate(poseMtrx, axis=0)
+
+        self.T_mtrx = np.array(poseMtrx)
+
+    def set_pose_mtrx_using_pair(self, pair_pose_mtrx):
+        # print(pair_pose_mtrx)  # Uncomment for debugging
+        # print(self.T_mtrx)  # Uncomment for debugging
+        p_mtrx = np.dot(pair_pose_mtrx, self.T_mtrx)
+        self.T_mtrx = np.array(p_mtrx)
+
+
+class ProjectionMatrix:
+    P_mtrx = []
+
+    def set_starting_projection_matrix(self, cam_mtrx):
+        projectionMtrx = []
+        zeroMtrx = [[0], [0], [0]]
+        projectionMtrx.append(cam_mtrx)
+        projectionMtrx.append(zeroMtrx)
+        projectionMtrx = np.concatenate(projectionMtrx, axis=1)
+        self.P_mtrx = np.array(projectionMtrx)
+
+    def set_projection_matrix_from_pose(self, R, t, cam_mtrx):
+        R_t = np.transpose(R)
+        m_R_t_t = np.dot(-R_t, t)
+
+        P_tmp = []
+        P_tmp.append(R_t)
+        P_tmp.append(m_R_t_t)
+        P_tmp = np.concatenate(P_tmp, axis=1)
+        # print(P_tmp)
+
+        P = np.dot(cam_mtrx, P_tmp)
+        # print(P)
+        self.P_mtrx = P
+
+
 class Image:
     def __init__(self):
         self.info = ImageInfo()
         self.camera = Camera()
         self.feature_points = FeaturePoints()
+
+        self.T_mtrx = PoseMatrix()  # Pose matrix for the current image
+        self.P_mtrx = ProjectionMatrix()  # Projection matrix  for the current image
 
     def img_set_image_id(self, index_id):
         self.info.set_image_id(index_id)
@@ -154,3 +221,9 @@ class Image:
         img = cv2.imread(self.info.src, cv2.IMREAD_GRAYSCALE)
         kp, descr = method.detectAndCompute(img, None)  # detect and compute keypoints
         self.feature_points.set_feature_point_list(kp, descr)
+
+    def img_set_starting_pose_matrix(self, pose_mtrx: PoseMatrix):
+        self.T_mtrx = pose_mtrx
+
+    def img_set_starting_projection_matrix(self, proj_mtrx: ProjectionMatrix):
+        self.P_mtrx = proj_mtrx

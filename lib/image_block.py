@@ -331,3 +331,161 @@ class ImageBlock:
             # print(block_match_list_tmp[imgL_id])
         self.block_match_list = block_match_list_tmp  # save it to block match list
         # print(self.block_match_list)  # print list for debugging
+
+    def b_img_create_pair_models(self, exportPath):
+        print("")
+        message_print("Find Landmarks")
+
+        matchSize = len(self.img_matches)  # take the size of the matches
+        # print(matchSize) # Uncomment for debugging
+
+        # Landmark Founder
+        matchCounter = 1  # set match counter to one (1)
+        set_start_mtrx = True  # set start matrix boolean to True
+        landmarkCounter = 0  # set landmark Counter to zero (0)
+        pairModelCounter = 0  # set pair model counter to zero (0)
+        for match in self.img_matches:  # for each matching pair
+            imgL_index = match.img_L_id  # read left img id
+            imgR_index = match.img_R_id  # read right img id
+
+            imgL = self.img_list[imgL_index]  # read left img (we need it for the index key table)
+            imgR = self.img_list[imgR_index]  # read right img (we need it for general information like name)
+            # print(imgR)
+
+            imgL_name = imgL.info.name  # read left img name
+            imgR_name = imgR.info.name  # read right img name
+
+            pts_inlier_L = match.f_pts_L  # read good matching points left
+            pts_inlier_R = match.f_pts_R  # read good matching points right
+
+            pts_inlier_L_id = match.f_pts_indexes_L  # read good matching points left indexes
+            pts_inlier_R_id = match.f_pts_indexes_R  # read good matching points right indexes
+
+            colors = match.colors  # take the colors
+
+            # Debugging message lines
+            print("")
+            message = "(%d / " % matchCounter + "%d)" % matchSize
+            message_print(message)
+            message = "Find landmark in images %s" % imgL_name + " and %s." % imgR_name
+            message_print(message)
+
+            # I prefer inlier solution.
+            E, mask = cv2.findEssentialMat(pts_inlier_L, pts_inlier_R, cam_mtrx)  # Find essential matrix
+            # print(E)
+
+            # Calculate pose matrix R and t
+            # poseVal = The number of pose points (we'll use these points to create the cloud)
+            #    R    = Rotate Matrix
+            #    t    = Translate Matrix
+            #  mask   = Take values 0 and 1 and if 1 this point is pose point (object point)
+            poseVal, R, t, mask = cv2.recoverPose(E, pts_inlier_L, pts_inlier_R, cam_mtrx)  # find R and t matrices
+            poseMask = mask  # Keep the mask in a variable poseMask (I done this for easier code reading)
+
+            # The poseVal value indicates the candidate number of new object points.
+            # I named it candidate because some of these points may be visible from previous images.
+            # In this case we need to find the average of these points. This method remove dublicate points and
+            # increase the accuracy of the final point cloud.
+            g_p_size = len(pts_inlier_L_id)  # take the size of pts_inlier_L_id = pts_inlier_R_id
+            # Debugging message lines
+            message = "Found %d" % poseVal + " candidate object points out %d suggested matching points." % g_p_size
+            message_print(message)
+
+            if set_start_mtrx:  # if we are in the first loop
+                set_start_mtrx = False  # set star matrix boolean to False
+                pose_mtrx_img_0 = PoseMatrix()  # create PoseMatrix object
+                pose_mtrx_img_0.set_starting_pose_matrix()  # set starting pose matrix
+                imgL.img_set_starting_pose_matrix(pose_mtrx_img_0)  # set starting point matrix to imgL
+
+                proj_mtrx_img_0 = ProjectionMatrix()  # create projection Matrix
+                proj_mtrx_img_0.set_starting_projection_matrix(self.camera.mtrx)  # set starting projection matrix
+                imgL.set_starting_projection_matrix(proj_mtrx_img_0)  #
+
+            landmark_debugging_list = []
+            if poseVal > POSE_RATIO * g_p_size and match.is_good:
+                # Create the pose matrices.
+                # Create the Pose and Projection Matrices
+                print_message("Calculate Pose Matrices:")
+
+                # imgL.T_mtrx is a list of all pose matrices of this image
+                # imgL.T_mtrx[0].T_mtrx is always the matrix of the left img
+                pose_mtrx_L_T = imgL.T_mtrx.T_mtrx
+
+                pose_mtrx_R = PoseMatrix()
+                pose_mtrx_R.setPoseMatrix_R_t(R, t)
+                pose_mtrx_R.set_pose_mtrx_using_pair(pose_mtrx_L_T)
+
+                proj_mtrx_L_P = imgL.P_mtrx.P_mtrx
+
+                R, t = pose_mtrx_R.take_R_and_t()
+                proj_mtrx_R_P = ProjectionMatrix()
+                proj_mtrx_R_P.set_projection_matrix_from_pose(R, t, self.camera.mtrx)
+
+                if imgR.id - imgL.id is 1:
+                    imgR.set_starting_pose_matrix(pose_mtrx_R)
+                    imgR.set_starting_projection_matrix(proj_mtrx_R_P)
+
+                #print("")
+                #print("pose_mtrx_L = \n", pose_mtrx_L_T)  # Uncomment for debug
+                #print("")
+                #print("pose_mtrx_R = \n", pose_mtrx_R.T_mtrx)  # Uncomment for debug
+                #print("")
+                #print("proj_mtrx_L = \n", proj_mtrx_L_P)  # Uncomment for debug
+                #print("")
+                #print("proj_mtrx_R = \n", proj_mtrx_R_P.P_mtrx)  # Uncomment for debug
+
+                # Triangulate
+                proj_mtrx_R_P = proj_mtrx_R_P.P_mtrx
+                print_message("Triangulation.")
+
+                triang_pnts_L = np.transpose(pts_inlier_L)
+                triang_pnts_R = np.transpose(pts_inlier_R)
+
+                points4D = cv.triangulatePoints(projMatr1=proj_mtrx_L_P,
+                                                projMatr2=proj_mtrx_R_P,
+                                                projPoints1=triang_pnts_L,
+                                                projPoints2=triang_pnts_R)
+                #print(points4D)  # Uncomment for debugging
+
+                # Find Good LandMark Points and Set Them to List
+                #print(pts_inlier_L_id)
+                #print(pts_inlier_R_id)
+                for l_index in range(0, g_p_size):
+                    if poseMask[l_index] != 0:
+                        #print(poseMask[l_index]) # Uncomment for debugging
+                        #print(l_index)  # Uncomment for debugging
+
+                        pt3d = Point3d()
+
+                        pt3d.x = points4D[0][l_index] / points4D[3][l_index]
+                        pt3d.y = points4D[1][l_index] / points4D[3][l_index]
+                        pt3d.z = points4D[2][l_index] / points4D[3][l_index]
+
+                        # OpenCV images are in BGR system so b=0, g=1, r=2
+                        r = colors[l_index][0]
+                        g = colors[l_index][1]
+                        b = colors[l_index][2]
+                        # print(r, g, b)
+                        l_pnt = Landmark()
+                        l_pnt.set_landmark(landmarkCounter, pt3d.x, pt3d.y, pt3d.z, 1, r, g, b)
+                        l_pnt.set_match_id_list(pts_inlier_L_id[l_index], pts_inlier_R_id[l_index])
+
+                        landmark_debugging_list.append(l_pnt)
+                        landmarkCounter += 1
+                pair_model_tmp = PairModel()
+                exportName = exportPath + imgL_name + "_" + imgR_name + ".ply"
+                exp_points, exp_colors, exp_id = transform_landmark_to_list_items(landmark_debugging_list)
+                message = "Export Pair Model as : " + exportName
+                print_message(message)
+                export_as_ply(exp_points, exp_colors, exportName)
+
+                pair_model_tmp.set_model(pairModelCounter, exp_id, exp_points, exp_colors)
+                self.pair_model.append(pair_model_tmp)
+            else:
+                message = "Cannot create pair model from images " + imgL_name + " and " + imgR_name + \
+                          ", due to few points."
+                print_message(message)
+
+                imgR.set_starting_pose_matrix(imgL.T_mtrx)
+                imgR.set_starting_projection_matrix(imgL.P_mtrx)
+            matchCounter += 1  # increase the matchCounter
