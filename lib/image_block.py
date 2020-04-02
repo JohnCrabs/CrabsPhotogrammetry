@@ -127,6 +127,14 @@ class ImageBlock:
             matchSize += 1  # perform the previous equation
         return matchSize  # return matchSize
 
+    def b_img_find_the_number_of_matches_all_images(self):
+        # Find the Number of feature matching
+        matchSize = 0  # set a matchSize counter
+        block_size = len(self.img_list)  # blockSize = number of images
+        for i in range(1, block_size):   # for i in range(1, block_size) => matchSize = Sum_{i=1}^{N}(blockSize - i)
+            matchSize += block_size - i  # perform the previous equation
+        return matchSize  # return matchSize
+
     def b_img_match_pairs(self, matcher, imgL_index: int, imgR_index: int, matchCounter: int, matchSize: int):
         """
         Match the feature points of a pair of images.
@@ -260,7 +268,19 @@ class ImageBlock:
         :return: Nothing
         """
         # Create matcher
-        #matcher = cv2.DescriptorMatcher_create(cv2.DescriptorMatcher_BRUTEFORCE_HAMMING)
+        matcher = cv2.DescriptorMatcher_create(cv2.DescriptorMatcher_BRUTEFORCE_HAMMING)
+
+        matchSize = self.b_img_find_the_number_of_matches_all_images()
+
+        message_print("Needs to perform %d matches." % matchSize)
+
+        # Create matches
+        matchCounter = 1
+        block_size = len(self.img_list)
+        for imgL_index in range(0, block_size - 1):
+            for imgR_index in range(imgL_index + 1, block_size):
+                self.b_img_match_pairs(matcher, imgL_index, imgL_index + 1, matchCounter, matchSize)
+                matchCounter += 1  # increase the matchCounter
 
     def b_img_fast_matching(self):
         """

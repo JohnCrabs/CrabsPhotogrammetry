@@ -322,9 +322,19 @@ class Window:
         :return: Nothing
         """
         if fast:
+            self.image_default_matching()
             self.image_block.b_img_fast_matching()
+            message_box_widget = QWidget()  # create QWidget
+            self.ui_main_win.actionFast_Matching.setChecked(self.UP)
+            QMessageBox.information(message_box_widget, "Fast Matching",
+                                    "Process finished successfully!")  # message information
         else:
-            print("All Images")
+            self.image_default_matching()
+            self.image_block.b_img_match_all_images()
+            self.ui_main_win.actionAll_Images_Matching.setChecked(self.UP)
+            message_box_widget = QWidget()  # create QWidget
+            QMessageBox.information(message_box_widget, "Matching All Images",
+                                    "Process finished successfully!")  # message information
 
     # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
     def simgv_open(self):
