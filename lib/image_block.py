@@ -117,7 +117,7 @@ class ImageBlock:
         :param image_matches: ImageMatches() object
         :return: Nothing
         """
-        self.matches.append(match)
+        self.matches.append(image_matches)
 
     def b_img_find_the_number_of_matches_fast(self):
         # Find the Number of feature matching
