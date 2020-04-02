@@ -260,9 +260,7 @@ class ImageBlock:
         :return: Nothing
         """
         # Create matcher
-        matcher = cv2.DescriptorMatcher_create(cv2.DescriptorMatcher_BRUTEFORCE_HAMMING)
-
-
+        #matcher = cv2.DescriptorMatcher_create(cv2.DescriptorMatcher_BRUTEFORCE_HAMMING)
 
     def b_img_fast_matching(self):
         """
