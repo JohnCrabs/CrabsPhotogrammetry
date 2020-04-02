@@ -65,6 +65,7 @@ class ImageInfo:
 class FeaturePoints:
     def __init__(self):
         self.exist = False
+        self.kp_ids = []
         self.keypoints = []
         self.descriptors = []
 
@@ -72,6 +73,8 @@ class FeaturePoints:
         self.exist = True
         self.keypoints = kp
         self.descriptors = descr
+        for i in range(0, len(self.keypoints)):
+            self.kp_ids.append(i)
 
 
 class Image:

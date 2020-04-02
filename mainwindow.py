@@ -322,7 +322,7 @@ class Window:
         :return: Nothing
         """
         if fast:
-            print("fast method")
+            self.image_block.b_img_fast_matching()
         else:
             print("All Images")
 
