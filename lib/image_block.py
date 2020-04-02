@@ -313,7 +313,7 @@ class ImageBlock:
             match_list_tmp = []  # create match list tmp
             for i in range(0, len(kp_ids)):  # for all keypoints id
                 tmp = [i]  # set i to tmp list
-                for j in range(img.id+1, len(self.images)):  # for all images
+                for j in range(img.info.id+1, len(self.img_list)):  # for all images
                     tmp.append(-1)  # append -1 (value that indicates no match)
                 match_list_tmp.append(tmp)  # append it to match_list_tmp
             # print(match_list_tmp)
@@ -330,4 +330,4 @@ class ImageBlock:
                 block_match_list_tmp[imgL_id][match_ids_L[index]][imgR_id-imgL_id] = match_ids_R[index]  # set table
             # print(block_match_list_tmp[imgL_id])
         self.block_match_list = block_match_list_tmp  # save it to block match list
-        print(self.block_match_list)  # print list for debugging
+        # print(self.block_match_list)  # print list for debugging
