@@ -332,7 +332,7 @@ class ImageBlock:
         self.block_match_list = block_match_list_tmp  # save it to block match list
         # print(self.block_match_list)  # print list for debugging
 
-    def b_img_create_pair_models(self, exportPath):
+    def b_img_create_pair_models(self):
         print("")
         message_print("Find Landmarks")
 
@@ -371,6 +371,7 @@ class ImageBlock:
             message_print(message)
 
             # I prefer inlier solution.
+            cam_mtrx = imgL.camera.mtrx  # i assume the two images have same camera mtrx
             E, mask = cv2.findEssentialMat(pts_inlier_L, pts_inlier_R, cam_mtrx)  # Find essential matrix
             # print(E)
 
@@ -398,32 +399,31 @@ class ImageBlock:
                 imgL.img_set_starting_pose_matrix(pose_mtrx_img_0)  # set starting point matrix to imgL
 
                 proj_mtrx_img_0 = ProjectionMatrix()  # create projection Matrix
-                proj_mtrx_img_0.set_starting_projection_matrix(self.camera.mtrx)  # set starting projection matrix
-                imgL.set_starting_projection_matrix(proj_mtrx_img_0)  # set starting projection matrix to imgL
+                proj_mtrx_img_0.set_starting_projection_matrix(imgL.camera.mtrx)  # set starting projection matrix
+                imgL.img_set_starting_projection_matrix(proj_mtrx_img_0)  # set starting projection matrix to imgL
 
-            landmark_debugging_list = []
-            if poseVal > POSE_RATIO * g_p_size and match.is_good:
+            landmark_debugging_list = []  # Create landmark list (for debugging)
+            if poseVal > POSE_RATIO * g_p_size and match.is_good:  # check if we have good match points
                 # Create the pose matrices.
                 # Create the Pose and Projection Matrices
-                print_message("Calculate Pose Matrices:")
+                # Debugging message line
+                message_print("Calculate Pose Matrices:")
 
-                # imgL.T_mtrx is a list of all pose matrices of this image
-                # imgL.T_mtrx[0].T_mtrx is always the matrix of the left img
-                pose_mtrx_L_T = imgL.T_mtrx.T_mtrx
+                pose_mtrx_L_T = imgL.T_mtrx.T_mtrx  # take the pose matrix of the left image
 
-                pose_mtrx_R = PoseMatrix()
-                pose_mtrx_R.setPoseMatrix_R_t(R, t)
-                pose_mtrx_R.set_pose_mtrx_using_pair(pose_mtrx_L_T)
+                pose_mtrx_R = PoseMatrix()  # Create PoseMatrix object for the right image
+                pose_mtrx_R.setPoseMatrix_R_t(R, t)  # Set pose matrix using R, t values (taken from Essential Matrix)
+                pose_mtrx_R.set_pose_mtrx_using_pair(pose_mtrx_L_T)  # Finalize pose matrix using the T_mtrx_L
 
-                proj_mtrx_L_P = imgL.P_mtrx.P_mtrx
+                proj_mtrx_L_P = imgL.P_mtrx.P_mtrx  # take the projection matrix of the left image
 
-                R, t = pose_mtrx_R.take_R_and_t()
-                proj_mtrx_R_P = ProjectionMatrix()
-                proj_mtrx_R_P.set_projection_matrix_from_pose(R, t, self.camera.mtrx)
+                R, t = pose_mtrx_R.take_R_and_t()  # Find the new R,t values of the right image (taken from pose matrix)
+                proj_mtrx_R_P = ProjectionMatrix()  # Create projection matrix object
+                proj_mtrx_R_P.set_projection_matrix_from_pose(R, t, imgR.camera.mtrx)  # Set the projection matrix
 
-                if imgR.id - imgL.id is 1:
-                    imgR.set_starting_pose_matrix(pose_mtrx_R)
-                    imgR.set_starting_projection_matrix(proj_mtrx_R_P)
+                if (imgR.info.id - imgL.info.id) == 1:  # Check if the images are sequential
+                    imgR.img_set_starting_pose_matrix(pose_mtrx_R)  # Set the pose matrix to the right img
+                    imgR.img_set_starting_projection_matrix(proj_mtrx_R_P)  # Set the projection matrix to the right img
 
                 #print("")
                 #print("pose_mtrx_L = \n", pose_mtrx_L_T)  # Uncomment for debug
@@ -435,23 +435,26 @@ class ImageBlock:
                 #print("proj_mtrx_R = \n", proj_mtrx_R_P.P_mtrx)  # Uncomment for debug
 
                 # Triangulate
-                proj_mtrx_R_P = proj_mtrx_R_P.P_mtrx
-                print_message("Triangulation.")
+                proj_mtrx_R_P = proj_mtrx_R_P.P_mtrx  # Change the object from ProjectionMatrix() to P_mtrx list
 
-                triang_pnts_L = np.transpose(pts_inlier_L)
-                triang_pnts_R = np.transpose(pts_inlier_R)
+                # Debugging message line
+                message_print("Triangulation.")
 
-                points4D = cv.triangulatePoints(projMatr1=proj_mtrx_L_P,
-                                                projMatr2=proj_mtrx_R_P,
-                                                projPoints1=triang_pnts_L,
-                                                projPoints2=triang_pnts_R)
-                #print(points4D)  # Uncomment for debugging
+                triang_pnts_L = np.transpose(pts_inlier_L)  # Set triangulation points for Left image
+                triang_pnts_R = np.transpose(pts_inlier_R)  # Set triangulation points for Right image
+
+                # Triangulate points
+                points4D = cv2.triangulatePoints(projMatr1=proj_mtrx_L_P,
+                                                 projMatr2=proj_mtrx_R_P,
+                                                 projPoints1=triang_pnts_L,
+                                                 projPoints2=triang_pnts_R)
+                # print(points4D)  # Uncomment for debugging
 
                 # Find Good LandMark Points and Set Them to List
-                #print(pts_inlier_L_id)
-                #print(pts_inlier_R_id)
-                for l_index in range(0, g_p_size):
-                    if poseMask[l_index] != 0:
+                # print(pts_inlier_L_id)
+                # print(pts_inlier_R_id)
+                for l_index in range(0, g_p_size):  # for all left indexes
+                    if poseMask[l_index] != 0:  # check in poseMask for the good points
                         #print(poseMask[l_index]) # Uncomment for debugging
                         #print(l_index)  # Uncomment for debugging
 
@@ -473,19 +476,25 @@ class ImageBlock:
                         landmark_debugging_list.append(l_pnt)
                         landmarkCounter += 1
                 pair_model_tmp = PairModel()
-                exportName = exportPath + imgL_name + "_" + imgR_name + ".ply"
-                exp_points, exp_colors, exp_id = transform_landmark_to_list_items(landmark_debugging_list)
-                message = "Export Pair Model as : " + exportName
-                print_message(message)
-                export_as_ply(exp_points, exp_colors, exportName)
+
+                #---------------------------------------------------------------------------------------------- #
+                # These lines are from another version. I leave them here for a quick debugging
+                # ---------------------------------------------------------------------------------------------- #
+                # exportName = exportPath + imgL_name + "_" + imgR_name + ".ply"
+                # exp_points, exp_colors, exp_id = transform_landmark_to_list_items(landmark_debugging_list)
+                # message = "Export Pair Model as : " + exportName
+                # message_print(message)
+                # export_as_ply(exp_points, exp_colors, exportName)
+                # ---------------------------------------------------------------------------------------------- #
 
                 pair_model_tmp.set_model(pairModelCounter, exp_id, exp_points, exp_colors)
                 self.pair_model.append(pair_model_tmp)
             else:
+                # Debugging message line
                 message = "Cannot create pair model from images " + imgL_name + " and " + imgR_name + \
                           ", due to few points."
-                print_message(message)
+                message_print(message)
 
-                imgR.set_starting_pose_matrix(imgL.T_mtrx)
-                imgR.set_starting_projection_matrix(imgL.P_mtrx)
+                imgR.set_starting_pose_matrix(imgL.T_mtrx)  # Set left pose matrix as right pose matrix
+                imgR.set_starting_projection_matrix(imgL.P_mtrx)  # Set L projection matrix as R projection matrix
             matchCounter += 1  # increase the matchCounter

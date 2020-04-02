@@ -340,7 +340,7 @@ class Window:
             self.ui_main_win.actionCreate_Model.setEnabled(self.UP)
 
     def image_create_model(self):
-        pass
+        self.image_block.b_img_create_pair_models()
 
     # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
     def simgv_open(self):

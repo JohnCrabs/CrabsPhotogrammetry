@@ -2,26 +2,45 @@ import cv2
 from lib.image import *
 
 def findMax_2x2(mtrx):
-    x = 0
-    y = 0
+    """
+    Find the max value of x and y values on a 2x2 matrix
+    :param mtrx: A 2x2 matrix [[x1, y1], [x2, y2]]
+    :return: x_max, y_max
+    """
+    x_max = 0
+    y_max = 0
 
     for m in mtrx:
-        if x < m[0]:
-            x = m[0]
-        if y < m[1]:
-            y = m[1]
-    return x, y
+        if x_max < m[0]:
+            x_max = m[0]
+        if y_max < m[1]:
+            y_max = m[1]
+    return x_max, y_max
 
 def find_color_list(img: Image(), pts_inlier: []):
+    """
+    Find the pixel colors of feature points of an image. If image is single band, then use the same pixel value for
+    all bands.
+    :param img: An Image() object
+    :param pts_inlier: The pixel points list (i,j)
+    :return: Nothing
+    """
     colors = []  # list to store the colors
     img_open = cv2.imread(img.info.src)  # open the image
 
-    blue = img_open[:, :, 0]  # take blue channel
-    green = img_open[:, :, 1]  # take green channel
-    red = img_open[:, :, 2]  # take red channel
+    img_size = img_open.shape
+
+    if len(img_size) == 3:
+        blue = img_open[:, :, 0]  # take blue channel
+        green = img_open[:, :, 1]  # take green channel
+        red = img_open[:, :, 2]  # take red channel
+    else:
+        blue = img_open  # take blue channel
+        green = img_open  # take green channel
+        red = img_open  # take red channel
 
     # ------------------------------------------- #
-    # Uncomment the necx lines for debugging
+    # Uncomment the next lines for debugging
     # ------------------------------------------- #
     # cv.imwrite("./blue.jpg", blue)
     # cv.imwrite("./green.jpg", green)
@@ -42,3 +61,29 @@ def find_color_list(img: Image(), pts_inlier: []):
         col = [col_r, col_g, col_b]  # store them to list named col
         colors.append(col)  # append the col list to color list
     return colors
+
+def export_as_ply(vertices, colors, filename):
+    """
+    Export a list of vertices as ply
+    :param vertices: A list of vertices
+    :param colors:  The corresponding color for the vertices
+    :param filename: The path to the file.ply
+    :return: Nothing
+    """
+    colors = colors.reshape(-1, 3)
+    vertices = np.hstack([vertices.reshape(-1, 3), colors])
+
+    ply_header = '''ply
+    format ascii 1.0
+    element vertex %(vert_num)d
+    property float x
+    property float y
+    property float z
+    property uchar red
+    property uchar green
+    property uchar blue
+    end_header
+    '''
+    with open(filename, 'w') as f:
+        f.write(ply_header % dict(vert_num=len(vertices)))
+        np.savetxt(f, vertices, '%f %f %f %d %d %d')
