@@ -260,7 +260,6 @@ class ImageBlock:
         message = "Found %d" % inliers_size + " inlier matches out of %d" % g_pnt_size + \
                   " good feature matching points."
         message_print(message)
-
         self.img_matches.append(match_tmp)
 
     def b_img_match_all_images(self):
@@ -282,6 +281,7 @@ class ImageBlock:
             for imgR_index in range(imgL_index + 1, block_size):
                 self.b_img_match_pairs(matcher, imgL_index, imgL_index + 1, matchCounter, matchSize)
                 matchCounter += 1  # increase the matchCounter
+        self.b_img_create_block_match_list()
 
     def b_img_fast_matching(self):
         """
@@ -301,6 +301,7 @@ class ImageBlock:
         for imgL_index in range(0, block_size - 1):
             self.b_img_match_pairs(matcher, imgL_index, imgL_index + 1, matchCounter, matchSize)
             matchCounter += 1  # increase the matchCounter
+        self.b_img_create_block_match_list()
 
     def b_img_create_block_match_list(self):
         block_match_list_tmp = []  # create block image list
