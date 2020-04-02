@@ -84,6 +84,7 @@ class ImageMatches:
         """
         return self.f_index_tab
 
+
 class ImageBlock:
     def __init__(self):
         self.img_list = []
@@ -200,8 +201,8 @@ class ImageBlock:
         points_L_img_ids = np.array(points_L_img_ids)  # ID_L
         points_R_img_ids = np.array(points_R_img_ids)  # ID_R
 
-        #print(points_L_img_ids)  # uncomment for console debugging
-        #print(points_R_img_ids)  # uncomment for console debugging
+        # print(points_L_img_ids)  # uncomment for console debugging
+        # print(points_R_img_ids)  # uncomment for console debugging
         # Calculate inliers using Fundamental Matrix
         # Debugging message line
         message_print("Calculate inlier matches.")
@@ -233,7 +234,7 @@ class ImageBlock:
             col_b = (int(color_inlier_L[i][2]) + int(color_inlier_R[i][2])) / 2  # find the average blue
             color = [int(col_r), int(col_g), int(col_b)]  # store them to color list
             color_inlier.append(color)  # append color to color inlier list
-        #print(color_inlier)  # Uncomment for console debugging
+        # print(color_inlier)  # Uncomment for console debugging
 
         match_tmp = ImageMatches()  # Create a temporary match item
         # match_tmp.set_match(m_id=matchCounter-1, imgL_id=img_L.id, imgR_id=img_R.id, g_matches=good_matches,
@@ -300,3 +301,32 @@ class ImageBlock:
         for imgL_index in range(0, block_size - 1):
             self.b_img_match_pairs(matcher, imgL_index, imgL_index + 1, matchCounter, matchSize)
             matchCounter += 1  # increase the matchCounter
+
+    def b_img_create_block_match_list(self):
+        block_match_list_tmp = []  # create block image list
+
+        for img_id in range(0, len(self.img_list)-1):  # for img_id in range(0, img_list_size -1 )
+            img = self.img_list[img_id]  # copy img from img list
+            kp_ids = img.feature_points.keypoints  # copy key points id
+
+            match_list_tmp = []  # create match list tmp
+            for i in range(0, len(kp_ids)):  # for all keypoints id
+                tmp = [i]  # set i to tmp list
+                for j in range(img.id+1, len(self.images)):  # for all images
+                    tmp.append(-1)  # append -1 (value that indicates no match)
+                match_list_tmp.append(tmp)  # append it to match_list_tmp
+            # print(match_list_tmp)
+            block_match_list_tmp.append(match_list_tmp)  # append it to block match tmp
+
+        for m in self.img_matches:  # for all img matches
+            imgL_id = m.img_L_id  # take the left image matching id
+            imgR_id = m.img_R_id  # take the right image matching id
+            # print(imgL_id, imgR_id)
+            # print(block_match_list_tmp[imgL_id])
+            match_ids_L = m.f_pts_indexes_L  # take the feature points ids for left image
+            match_ids_R = m.f_pts_indexes_R  # take the feature points ids for right image
+            for index in range(0, len(match_ids_L)):  # for all matches
+                block_match_list_tmp[imgL_id][match_ids_L[index]][imgR_id-imgL_id] = match_ids_R[index]  # set table
+            # print(block_match_list_tmp[imgL_id])
+        self.block_match_list = block_match_list_tmp  # save it to block match list
+        print(self.block_match_list)  # print list for debugging
