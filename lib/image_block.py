@@ -86,12 +86,305 @@ class ImageMatches:
         return self.f_index_tab
 
 
+class Landmark:
+    l_id: int
+    pnt3d: Point3d
+    color: Color
+    seen = 0
+
+    match_id_list = []
+
+    def set_landmark(self, l_id: int, x: float, y: float, z: float, seen: int, r=0, g=0, b=0):
+        self.l_id = l_id
+        pnt = Point3d()
+        pnt.set_point(x, y, z)
+        self.pnt3d = pnt
+        col = Color()
+        col.set_color(r, g, b)
+        self.color = col
+        self.seen = seen
+
+    def append_pnt3d(self, pnt: Point3d):
+        self.pnt3d.x += pnt.x
+        self.pnt3d.y += pnt.y
+        self.pnt3d.z += pnt.z
+        self.seen += 1
+
+    def finalize_coordinates(self):
+        self.pnt3d.x /= self.seen
+        self.pnt3d.y /= self.seen
+        self.pnt3d.z /= self.seen
+
+    def set_match_id_list(self, img_index_L, img_index_R):
+        id_list = []
+        id_list.append(img_index_L)
+        id_list.append(img_index_R)
+        self.match_id_list = id_list
+
+
+class PairModel:
+    id = 0
+    imgL_id = 0
+    imgR_id = 0
+    imgL_name: str
+    imgR_name: str
+    points = []
+    colors = []
+    id_L_R_list = []
+    Xo = 0
+    Yo = 0
+    Zo = 0
+
+    inlier_L = []
+    inlier_R = []
+    inlier_id_L = []
+    inlier_id_R = []
+    camera = Camera()
+
+    def set_model(self, index: int, imgL_id: int, imgR_id: int, id_list: [], points: [], colors: []):
+        self.id = index
+        self.imgL_id = imgL_id
+        self.imgR_id = imgR_id
+        self.id_L_R_list = id_list
+        self.points = points
+        self.colors = colors
+
+    def set_model_img_names(self, imgL_name: str, imgR_name: str):
+        self.imgL_name = imgL_name
+        self.imgR_name = imgR_name
+
+    def find_index_with_R_id(self, r_id: int):
+        for index in range(0, len(self.id_L_R_list)):
+            if r_id == self.id_L_R_list[index][1]:
+                return index
+        return -1
+
+    def set_axis_origin(self, Xo: float, Yo: float, Zo: float):
+        self.Xo = Xo
+        self.Yo = Yo
+        self.Zo = Zo
+
+    def move_cloud_to_new_origin(self, Xo_new: float, Yo_new: float, Zo_new: float):
+        dx = Xo_new - self.Xo
+        dy = Yo_new - self.Yo
+        dz = Zo_new - self.Zo
+
+        self.Xo += dx
+        self.Yo += dy
+        self.Zo += dz
+
+        for i in range(0, len(self.points)):
+            self.points[i][0] += dx
+            self.points[i][1] += dy
+            self.points[i][2] += dz
+
+    def scale_model(self, scale_factor: float):
+        old_xo = self.Xo
+        old_yo = self.Yo
+        old_zo = self.Zo
+
+        new_xo = 0.0
+        new_yo = 0.0
+        new_zo = 0.0
+        point_size = len(self.points)
+
+        for i in range(0, point_size):
+            self.points[i][0] *= scale_factor
+            self.points[i][1] *= scale_factor
+            self.points[i][2] *= scale_factor
+
+            new_xo += self.points[i][0]
+            new_yo += self.points[i][1]
+            new_zo += self.points[i][2]
+
+        self.Xo = new_xo / point_size
+        self.Yo = new_yo / point_size
+        self.Zo = new_zo / point_size
+
+        self.move_cloud_to_new_origin(old_xo, old_yo, old_zo)
+
+    def rotate_translate_model(self, R: [], t: []):
+        A = np.transpose(self.points)
+        m, n = A.shape
+        B2 = np.dot(R, A) + np.tile(t, (1, n))
+        self.points = np.transpose(B2)
+
+
+class BlockModel:
+    landmark_ids = []
+    landmark_shown = []
+    landmark = []
+    landmark_colors = []
+
+    def create_landmark_model(self, pair_model_list: [], table_id_list: [], exportCloud=""):
+        print("")
+        print_message("Create Model from Pair Models.")
+
+        # Find the Number of feature matching
+        pairSize = 0
+        model_size = len(pair_model_list)
+        for i in range(1, model_size):
+            pairSize += model_size - i
+
+        pairCounter = 1
+        landmarkCounter = 0
+        pair_model_list_size = len(pair_model_list)
+        for m_index_L in range(0, pair_model_list_size-1):
+            pm_L = pair_model_list[m_index_L]
+            for m_index_R in range(m_index_L+1, pair_model_list_size):
+                pm_R = pair_model_list[m_index_R]
+
+                pm_L_img_L_id = pm_L.imgL_id
+                pm_L_img_R_id = pm_L.imgR_id
+                pm_R_img_L_id = pm_R.imgL_id
+                pm_R_img_R_id = pm_R.imgR_id
+
+                img_L_L_name = pm_L.imgL_name
+                img_L_R_name = pm_L.imgR_name
+                img_R_L_name = pm_R.imgL_name
+                img_R_R_name = pm_R.imgR_name
+
+                print("")
+                message = "( %d / " % pairCounter + "%d )" % pairSize
+                print_message(message)
+                message = "Find transformation parameters for " + "(" + img_L_L_name + "-" + img_L_R_name + ")" + \
+                          "(" + img_R_L_name + "-" + img_R_R_name + ")"
+                print_message(message)
+
+                pm_id_list_tmp = []
+
+                if pm_L_img_L_id == pm_R_img_L_id:
+                    for l_id in range(0, len(table_id_list[pm_L_img_L_id])):
+                        pm_L_id = table_id_list[pm_L_img_L_id][l_id][pm_L_img_R_id-pm_L_img_L_id]
+                        pm_R_id = table_id_list[pm_L_img_L_id][l_id][pm_R_img_R_id-pm_R_img_L_id]
+                        if pm_L_id != -1 and pm_R_id != -1:
+                            pm_L_pnt_index = pm_L.find_index_with_R_id(pm_L_id)
+                            pm_R_pnt_index = pm_R.find_index_with_R_id(pm_R_id)
+                            if pm_L_pnt_index != -1 and pm_R_pnt_index != -1:
+                                tmp = []
+                                tmp.append(pm_L_pnt_index)
+                                tmp.append(pm_R_pnt_index)
+                                pm_id_list_tmp.append(tmp)
+                                #print(pm_L_pnt_index, pm_L_id, pm_R_pnt_index, pm_R_id)
+                elif pm_L_img_R_id == pm_R_img_L_id:
+                    for l_id in range(0, len(table_id_list[pm_L_img_L_id])):
+                        pm_L_id_r = table_id_list[pm_L_img_L_id][l_id][pm_L_img_R_id - pm_L_img_L_id]
+                        if pm_L_id_r != -1:
+                            for r_id in range(0, len(table_id_list[pm_R_img_L_id])):
+                                pm_R_id_l = table_id_list[pm_R_img_L_id][r_id][0]
+                                if pm_L_id_r == pm_R_id_l:
+                                    pm_L_id = table_id_list[pm_L_img_L_id][l_id][pm_L_img_R_id - pm_L_img_L_id]
+                                    pm_R_id = table_id_list[pm_R_img_L_id][r_id][pm_R_img_R_id - pm_R_img_L_id]
+                                    if pm_L_id != -1 and pm_R_id != -1:
+                                        pm_L_pnt_index = pm_L.find_index_with_R_id(pm_L_id)
+                                        pm_R_pnt_index = pm_R.find_index_with_R_id(pm_R_id)
+                                        if pm_L_pnt_index != -1 and pm_R_pnt_index != -1:
+                                            tmp = []
+                                            tmp.append(pm_L_pnt_index)
+                                            tmp.append(pm_R_pnt_index)
+                                            pm_id_list_tmp.append(tmp)
+                                         # print(pm_L_pnt_index, pm_L_id, pm_R_pnt_index, pm_R_id)
+                else:
+                    print_message("Cannot match pairs without same images.")
+                    break
+
+                # print(debugging_test)
+                #print(len(pm_id_list_tmp))
+                # print(pm_id_list_tmp)
+                points_src = []
+                points_dst = []
+                points_src_ids = []
+                points_dst_ids = []
+                for p_id in range(0, len(pm_id_list_tmp)):
+                    id_l = pm_id_list_tmp[p_id][0]
+                    id_r = pm_id_list_tmp[p_id][1]
+
+                    pnt_l = pm_L.points[id_l]
+                    pnt_l = [pnt_l[0], pnt_l[1], pnt_l[2]]
+                    pnt_r = pm_R.points[id_r]
+                    pnt_r = [pnt_r[0], pnt_r[1], pnt_r[2]]
+
+                    points_src.append(pnt_l)
+                    points_dst.append(pnt_r)
+                    points_src_ids.append(id_l)
+                    points_dst_ids.append(id_r)
+
+                print_message("Found %d" % len(points_src) + " cloud matching points.")
+                if len(points_src) > 10:
+                    print_message("Calculate scale.")
+                    scale, scale_error = find_scale_parameter(points_src, points_dst)
+                    print("Scale = ", scale)
+                    print("Scale_error = ", scale_error)
+
+                else:
+                    print_message("Too few matching points. Cannot match these pairs")
+                    break
+
+                print_message("Scale model " + img_R_L_name + "-" + img_R_R_name)
+
+                pm_R.scale_model(scale)
+                exp_points = pm_R.points
+                exp_colors = pm_R.colors
+                if exportCloud != "":
+                    exportName = exportCloud + img_R_L_name + "_" + img_R_R_name + "_scale.ply"
+                    message = "Export Scale Pair Model as : " + exportName
+                    print_message(message)
+                    export_as_ply(exp_points, exp_colors, exportName)
+
+                points_dst = []
+                for i in range(0, len(points_src)):
+                    id_r = pm_id_list_tmp[i][1]
+                    points_dst.append(exp_points[id_r])
+
+                points_src = np.array(points_src)
+                points_dst = np.array(points_dst)
+
+                #print(len(points_src))
+                #print(len(points_dst))
+
+                #print(points_src)
+                points_src_t = points_src.T
+                points_dst_t = points_dst.T
+
+                R, t = rigid_transform_3D(points_dst_t, points_src_t)
+
+                print("")
+                print_message("Rotation Mtrx = ")
+                print(R)
+                print("")
+                print_message("Translation Mtrx = ")
+                print(t)
+                pm_R.rotate_translate_model(R, t)
+                exp_points = pm_R.points
+                exp_colors = pm_R.colors
+                if exportCloud != "":
+                    exportName = exportCloud + "finalβλέ/" + img_R_L_name + "_" + img_R_R_name + "_R_t.ply"
+                    message = "Export Rotate + Translate Pair Model as : " + exportName
+                    print_message(message)
+                    export_as_ply(exp_points, exp_colors, exportName)
+
+                if landmarkCounter == 0:
+                    self.landmark = exp_points
+                    self.landmark_colors = exp_colors
+                    for i in range(0, len(self.landmark)):
+                        self.landmark_shown.append(1)
+
+                    landmarkCounter += 1
+
+                else:
+                    pass
+
+                pairCounter += 1
+
+
 class ImageBlock:
     def __init__(self):
         self.img_list = []
 
         self.img_matches = []  # A list of ImageMatches class items (store all matching information)
         self.block_match_list = []  # A list which contains all id matches
+
+
 
     # *** IMAGE LIST *** #
 
