@@ -399,7 +399,7 @@ class ImageBlock:
 
                 proj_mtrx_img_0 = ProjectionMatrix()  # create projection Matrix
                 proj_mtrx_img_0.set_starting_projection_matrix(self.camera.mtrx)  # set starting projection matrix
-                imgL.set_starting_projection_matrix(proj_mtrx_img_0)  #
+                imgL.set_starting_projection_matrix(proj_mtrx_img_0)  # set starting projection matrix to imgL
 
             landmark_debugging_list = []
             if poseVal > POSE_RATIO * g_p_size and match.is_good:
