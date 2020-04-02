@@ -113,6 +113,7 @@ class Window:
         self.ui_main_win.actionCreate_Block.triggered.connect(self.image_create_block)
         self.ui_main_win.actionAll_Images_Matching.triggered.connect(lambda: self.image_matching(fast=False))
         self.ui_main_win.actionFast_Matching.triggered.connect(lambda: self.image_matching(fast=True))
+        self.ui_main_win.actionCreate_Model.triggered.connect(self.image_create_model)
 
         # *** SIMPLE IMAGE VIEWER *** #
         self.ui_simple_img_viewer.button_previous.clicked.connect(self.simgv_button_previous)
@@ -328,6 +329,7 @@ class Window:
             self.ui_main_win.actionFast_Matching.setChecked(self.UP)
             QMessageBox.information(message_box_widget, "Fast Matching",
                                     "Process finished successfully!")  # message information
+            self.ui_main_win.actionCreate_Model.setEnabled(self.UP)
         else:
             self.image_default_matching()
             self.image_block.b_img_match_all_images()
@@ -335,6 +337,10 @@ class Window:
             message_box_widget = QWidget()  # create QWidget
             QMessageBox.information(message_box_widget, "Matching All Images",
                                     "Process finished successfully!")  # message information
+            self.ui_main_win.actionCreate_Model.setEnabled(self.UP)
+
+    def image_create_model(self):
+        pass
 
     # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
     def simgv_open(self):

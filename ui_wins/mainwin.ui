@@ -294,6 +294,9 @@
      <addaction name="menuFind_Feature_Points"/>
      <addaction name="actionCreate_Block"/>
      <addaction name="menuImage_Matching"/>
+     <addaction name="actionCreate_Model"/>
+     <addaction name="separator"/>
+     <addaction name="actionCrabSFM"/>
     </widget>
     <addaction name="actionImageImport"/>
     <addaction name="actionImageExport"/>
@@ -428,6 +431,22 @@
    </property>
    <property name="text">
     <string>Create Block</string>
+   </property>
+  </action>
+  <action name="actionCreate_Model">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Create Model</string>
+   </property>
+  </action>
+  <action name="actionCrabSFM">
+   <property name="text">
+    <string>CrabSFM</string>
    </property>
   </action>
  </widget>
