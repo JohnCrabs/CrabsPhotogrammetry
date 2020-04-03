@@ -120,12 +120,15 @@ class Window:
         self.ui_main_win.actionAll_Images_Matching.triggered.connect(lambda: self.image_matching(fast=False))
         self.ui_main_win.actionFast_Matching.triggered.connect(lambda: self.image_matching(fast=True))
         self.ui_main_win.actionCreate_Model.triggered.connect(self.image_create_model)
-        self.ui_main_win.actionCrabSFM.triggered.connect(self.image_crabsSFM)
-
+        self.ui_main_win.actionCrabSFM.triggered.connect(self.crabSFM_open)
         # *** SIMPLE IMAGE VIEWER *** #
         self.ui_simple_img_viewer.button_previous.clicked.connect(self.simgv_button_previous)
         self.ui_simple_img_viewer.button_next.clicked.connect(self.simgv_button_next)
         self.ui_simple_img_viewer.check_box_draw_keypoints.stateChanged.connect(self.simgv_kp_view_check)
+
+        # *** CrabSFM UI *** #
+        self.ui_crabSFM.button_cancel.clicked.connect(self.crabSFM_cancel)
+        self.ui_crabSFM.button_compute.clicked.connect(self.crabSFM_compute)
 
         # *** VIDEO *** #
         self.ui_main_win.actionVideoImport.triggered.connect(self.video_import)  # actionVideoImport
@@ -228,9 +231,10 @@ class Window:
         """
         self.ui_main_win.actionApproximate_Interior_Orientation.setChecked(self.DOWN)
 
-    def image_approximate_camera(self):
+    def image_approximate_camera(self, show_message=True):
         """
         Approximate the camera interior orientation for each image in image list.
+        :param show_message: True/False
         :return: Nothing
         """
         success = False  # set success boolean to false
@@ -243,9 +247,10 @@ class Window:
             self.ui_main_win.menuFind_Feature_Points.setEnabled(self.UP)  # enable menu find feature points
             # check action approximate interior orientation
             self.ui_main_win.actionApproximate_Interior_Orientation.setChecked(self.UP)
-            message_box_widget = QWidget()  # create QWidget
-            QMessageBox.information(message_box_widget, "Approximate Interior Orientation",
-                                    "Process finished successfully!")  # information message
+            if show_message:
+                message_box_widget = QWidget()  # create QWidget
+                QMessageBox.information(message_box_widget, "Approximate Interior Orientation",
+                                        "Process finished successfully!")  # information message
 
     def image_default_find_feature_points_checked(self):
         """
@@ -257,10 +262,11 @@ class Window:
         self.ui_main_win.actionORB.setChecked(self.DOWN)
         self.ui_main_win.actionAKAZE.setChecked(self.DOWN)
 
-    def image_find_feature_points(self, flag=IMG_AKAZE):
+    def image_find_feature_points(self, flag=IMG_AKAZE, show_message=True):
         """
         Use the appropriate flag and find the feature points for each image in the list.
         It takes a while to calculate for big images.
+        :param show_message: True/False
         :param flag: IMG_SIFT, IMG_SURF, IMG_ORB, IMG_AKAZE
         :return: Nothing
         """
@@ -281,9 +287,10 @@ class Window:
             self.ui_simple_img_viewer.check_box_draw_keypoints.setChecked(self.DOWN)  # uncheck it
             self.draw_kp = self.DOWN  # set the draw kp boolean to uncheck (use this for code readability)
             self.ui_main_win.actionCreate_Block.setEnabled(self.UP)  # enable action Create Block
-            message_box_widget = QWidget()  # Create QWidget
-            QMessageBox.information(message_box_widget, flag,
-                                    "Process finished successfully!")  # message information
+            if show_message:
+                message_box_widget = QWidget()  # Create QWidget
+                QMessageBox.information(message_box_widget, flag,
+                                        "Process finished successfully!")  # message information
 
     def image_default_create_block_checked(self):
         """
@@ -292,7 +299,7 @@ class Window:
         """
         self.ui_main_win.actionCreate_Block.setChecked(self.DOWN)
 
-    def image_create_block(self):
+    def image_create_block(self, show_message=True):
         """
         Create a block of images for all checked images in image list.
         :return: Nothing
@@ -312,9 +319,10 @@ class Window:
             self.ui_main_win.actionCreate_Block.setChecked(self.UP)  # check Create Block
             self.image_block.b_img_create_image_list(image_list_tmp)  # set the image block
             self.ui_main_win.menuImage_Matching.setEnabled(self.UP)  # enable menu Image Matching
-            message_box_widget = QWidget()  # create QWidget
-            QMessageBox.information(message_box_widget, "Create Block",
-                                    "Process finished successfully!")  # message information
+            if show_message:
+                message_box_widget = QWidget()  # create QWidget
+                QMessageBox.information(message_box_widget, "Create Block",
+                                        "Process finished successfully!")  # message information
 
     def image_default_matching(self):
         """
@@ -324,9 +332,10 @@ class Window:
         self.ui_main_win.actionAll_Images_Matching.setChecked(self.DOWN)
         self.ui_main_win.actionFast_Matching.setChecked(self.DOWN)
 
-    def image_matching(self, fast=False):
+    def image_matching(self, fast=False, show_message=True):
         """
         If fast=True run fast matching method. Else run block matching method (match all images).
+        :param show_message:  True/False
         :param fast: True/False
         :return: Nothing
         """
@@ -335,39 +344,101 @@ class Window:
             self.image_block.b_img_fast_matching()
             message_box_widget = QWidget()  # create QWidget
             self.ui_main_win.actionFast_Matching.setChecked(self.UP)
-            QMessageBox.information(message_box_widget, "Fast Matching",
-                                    "Process finished successfully!")  # message information
-            self.ui_main_win.actionCreate_Model.setEnabled(self.UP)
+            if show_message:
+                QMessageBox.information(message_box_widget, "Fast Matching",
+                                        "Process finished successfully!")  # message information
+                self.ui_main_win.actionCreate_Model.setEnabled(self.UP)
         else:
             self.image_default_matching()
             self.image_block.b_img_match_all_images()
             self.ui_main_win.actionAll_Images_Matching.setChecked(self.UP)
-            message_box_widget = QWidget()  # create QWidget
-            QMessageBox.information(message_box_widget, "Matching All Images",
-                                    "Process finished successfully!")  # message information
+            if show_message:
+                message_box_widget = QWidget()  # create QWidget
+                QMessageBox.information(message_box_widget, "Matching All Images",
+                                        "Process finished successfully!")  # message information
             self.ui_main_win.actionCreate_Model.setEnabled(self.UP)
 
-    def image_create_model(self):
+    def image_create_model(self, show_message=True):
         self.image_block.b_img_create_pair_models()
         self.image_block.b_img_create_block_model()
         message_box_widget = QWidget()  # create QWidget
-        QMessageBox.information(message_box_widget, "Create Model",
-                                "Process finished successfully!")  # message information
+        if show_message:
+            QMessageBox.information(message_box_widget, "Create Model",
+                                    "Process finished successfully!")  # message information
 
     # *** CRABS SFM UI*** #
-    def crabsSFM_open(self):
+    def crabSFM_open(self):
+        self.crabSFM_default_runtime_checkboxes()
+        self.crabSFM_default_options()
         self.WinCrabSFM.show()
 
-    def crabsSFM_default_options(self):
+    def crabSFM_default_runtime_checkboxes(self):
+        self.ui_crabSFM.checkBox_Camera.setCheckable(self.UP)
+        self.ui_crabSFM.checkBox_Camera.setChecked(self.DOWN)
+        self.ui_crabSFM.checkBox_Camera.setCheckable(self.DOWN)
+
+        self.ui_crabSFM.checkBox_Block_Creation.setCheckable(self.UP)
+        self.ui_crabSFM.checkBox_Block_Creation.setChecked(self.DOWN)
+        self.ui_crabSFM.checkBox_Block_Creation.setCheckable(self.DOWN)
+
+        self.ui_crabSFM.checkBox_Find_Feature_Points.setCheckable(self.UP)
+        self.ui_crabSFM.checkBox_Find_Feature_Points.setChecked(self.DOWN)
+        self.ui_crabSFM.checkBox_Find_Feature_Points.setCheckable(self.DOWN)
+
+        self.ui_crabSFM.checkBox_Image_Matching.setCheckable(self.UP)
+        self.ui_crabSFM.checkBox_Image_Matching.setChecked(self.DOWN)
+        self.ui_crabSFM.checkBox_Image_Matching.setCheckable(self.DOWN)
+
+        self.ui_crabSFM.checkBox_Create_Model.setCheckable(self.UP)
+        self.ui_crabSFM.checkBox_Create_Model.setChecked(self.DOWN)
+        self.ui_crabSFM.checkBox_Create_Model.setCheckable(self.DOWN)
+
+    def crabSFM_default_options(self):
         self.ui_crabSFM.radio_approximate_interion_orientation.setChecked(self.UP)
         self.ui_crabSFM.radio_AKAZE.setChecked(self.UP)
-        self.ui_crabSFM.radio_Match_All_Images(self.UP)
+        self.ui_crabSFM.radio_Match_All_Images.setChecked(self.UP)
 
-    def crabsSFM_default_runtime_checkboxes(self):
-        self.ui_crabSFM.checkBox_Camera.setChecked(self.DOWN)
-        self.ui_crabSFM.checkBox_Block_Creation.setChecked(self.DOWN)
-        self.ui_crabSFM.checkBox_Find_Feature_Points.setChecked(self.DOWN)
-        self.ui_crabSFM.checkBox_Image_Matching.setChecked(self.DOWN)
+    def crabSFM_cancel(self):
+        self.WinCrabSFM.close()
+
+    def crabSFM_compute(self):
+        self.crabSFM_default_runtime_checkboxes()
+        # Camera Settings
+        if self.ui_crabSFM.radio_approximate_interion_orientation.isChecked():
+            self.image_approximate_camera(show_message=False)
+        self.ui_crabSFM.checkBox_Camera.setCheckable(self.UP)
+        self.ui_crabSFM.checkBox_Camera.setChecked(self.UP)
+        #self.ui_crabSFM.checkBox_Camera.setCheckable(self.DOWN)
+        # Feature Points
+        if self.ui_crabSFM.radio_SIFT.isChecked():
+            self.image_find_feature_points(flag=IMG_SIFT, show_message=False)
+        elif self.ui_crabSFM.radio_SURF.isChecked():
+            self.image_find_feature_points(flag=IMG_SURF, show_message=False)
+        elif self.ui_crabSFM.radio_ORB.isChecked():
+            self.image_find_feature_points(flag=IMG_ORB, show_message=False)
+        elif self.ui_crabSFM.radio_AKAZE.isChecked():
+            self.image_find_feature_points(flag=IMG_AKAZE, show_message=False)
+        self.ui_crabSFM.checkBox_Block_Creation.setCheckable(self.UP)
+        self.ui_crabSFM.checkBox_Block_Creation.setChecked(self.UP)
+        self.ui_crabSFM.checkBox_Block_Creation.setCheckable(self.DOWN)
+        # Create Block
+        self.image_create_block(show_message=False)
+        self.ui_crabSFM.checkBox_Find_Feature_Points.setCheckable(self.UP)
+        self.ui_crabSFM.checkBox_Find_Feature_Points.setChecked(self.UP)
+        self.ui_crabSFM.checkBox_Find_Feature_Points.setCheckable(self.DOWN)
+        # Image Matching
+        if self.ui_crabSFM.radio_Match_All_Images.isChecked():
+            self.image_matching(fast=False, show_message=False)
+        elif self.ui_crabSFM.radio_Fast_Matching.isChecked():
+            self.image_matching(fast=True, show_message=False)
+        self.ui_crabSFM.checkBox_Image_Matching.setCheckable(self.UP)
+        self.ui_crabSFM.checkBox_Image_Matching.setChecked(self.UP)
+        self.ui_crabSFM.checkBox_Image_Matching.setCheckable(self.DOWN)
+        # Create Model
+        self.image_create_model(show_message=False)
+        self.ui_crabSFM.checkBox_Create_Model.setCheckable(self.UP)
+        self.ui_crabSFM.checkBox_Create_Model.setChecked(self.UP)
+        self.ui_crabSFM.checkBox_Create_Model.setCheckable(self.DOWN)
 
     # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
     def simgv_open(self):

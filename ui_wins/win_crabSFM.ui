@@ -27,14 +27,30 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <widget class="Line" name="line_5">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QWidget" name="widget_camera" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QCheckBox" name="checkBox_Camera">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="mouseTracking">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Camera</string>
         </property>
         <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="tristate">
          <bool>false</bool>
         </property>
        </widget>
@@ -59,15 +75,25 @@
     </widget>
    </item>
    <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QWidget" name="widget_find_feature_points" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QCheckBox" name="checkBox_Find_Feature_Points">
+        <property name="mouseTracking">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Find Feature Points</string>
         </property>
         <property name="checkable">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -85,7 +111,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="radio_AKAZE">
+          <widget class="QRadioButton" name="radio_SURF">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -95,14 +121,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="radio_SURF">
+          <widget class="QRadioButton" name="radio_ORB">
            <property name="text">
             <string>ORB</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="radio_ORB">
+          <widget class="QRadioButton" name="radio_AKAZE">
            <property name="text">
             <string>AKAZE</string>
            </property>
@@ -118,15 +144,25 @@
     </widget>
    </item>
    <item>
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QWidget" name="widget_Block_Creation" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
        <widget class="QCheckBox" name="checkBox_Block_Creation">
+        <property name="mouseTracking">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Block Creation</string>
         </property>
         <property name="checkable">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -134,14 +170,27 @@
     </widget>
    </item>
    <item>
+    <widget class="Line" name="line_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QWidget" name="widget_image_matching" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
        <widget class="QCheckBox" name="checkBox_Image_Matching">
+        <property name="mouseTracking">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Image Matching</string>
         </property>
         <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
          <bool>false</bool>
         </property>
        </widget>
@@ -170,6 +219,39 @@
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_4">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget_Create_Model" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <item>
+       <widget class="QCheckBox" name="checkBox_Create_Model">
+        <property name="mouseTracking">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Create Model</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_6">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
     </widget>
    </item>
    <item>

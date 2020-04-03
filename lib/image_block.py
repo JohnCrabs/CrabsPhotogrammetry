@@ -128,8 +128,8 @@ class PairModel:
         self.id = 0
         self.imgL_id = 0
         self.imgR_id = 0
-        self.imgL_name: str
-        self.imgR_name: str
+        self.imgL_name = str
+        self.imgR_name = str
         self.points = []
         self.colors = []
         self.id_L_R_list = []
@@ -314,7 +314,7 @@ class BlockModel:
                     points_src_ids.append(id_l)
                     points_dst_ids.append(id_r)
 
-                print_message("Found %d" % len(points_src) + " cloud matching points.")
+                message_print("Found %d" % len(points_src) + " cloud matching points.")
                 if len(points_src) > 10:
                     print_message("Calculate scale.")
                     scale, scale_error = find_scale_parameter(points_src, points_dst)
@@ -816,6 +816,7 @@ class ImageBlock:
                 # export_as_ply(exp_points, exp_colors, exportName)
                 # ---------------------------------------------------------------------------------------------- #
                 pair_model_tmp.set_model(pairModelCounter, imgL.info.id, imgR.info.id,  exp_id, exp_points, exp_colors)
+                pair_model_tmp.set_model_img_names(imgL_name, imgR_name)
                 self.pair_model.append(pair_model_tmp)
             else:
                 # Debugging message line
@@ -823,8 +824,8 @@ class ImageBlock:
                           ", due to few points."
                 message_print(message)
 
-                imgR.set_starting_pose_matrix(imgL.T_mtrx)  # Set left pose matrix as right pose matrix
-                imgR.set_starting_projection_matrix(imgL.P_mtrx)  # Set L projection matrix as R projection matrix
+                imgR.img_set_starting_pose_matrix(imgL.T_mtrx)  # Set left pose matrix as right pose matrix
+                imgR.img_set_starting_projection_matrix(imgL.P_mtrx)  # Set L projection matrix as R projection matrix
             matchCounter += 1  # increase the matchCounter
 
     def b_img_create_block_model(self):
