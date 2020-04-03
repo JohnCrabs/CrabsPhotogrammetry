@@ -39,19 +39,32 @@
       <item>
        <widget class="QCheckBox" name="checkBox_Camera">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>20</width>
+          <height>16777215</height>
+         </size>
         </property>
         <property name="mouseTracking">
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Camera</string>
+         <string/>
         </property>
         <property name="checkable">
          <bool>true</bool>
         </property>
         <property name="tristate">
          <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_Camera">
+        <property name="text">
+         <string>Camera</string>
         </property>
        </widget>
       </item>
@@ -86,6 +99,15 @@
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QCheckBox" name="checkBox_Find_Feature_Points">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>20</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="mouseTracking">
          <bool>false</bool>
         </property>
@@ -94,6 +116,13 @@
         </property>
         <property name="checkable">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_Find_Feature_Points">
+        <property name="text">
+         <string>Find Feature Points</string>
         </property>
        </widget>
       </item>
@@ -155,14 +184,30 @@
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
        <widget class="QCheckBox" name="checkBox_Block_Creation">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>20</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="mouseTracking">
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Block Creation</string>
+         <string/>
         </property>
         <property name="checkable">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_Block_Creation">
+        <property name="text">
+         <string>Block Creation</string>
         </property>
        </widget>
       </item>
@@ -181,17 +226,33 @@
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
        <widget class="QCheckBox" name="checkBox_Image_Matching">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>20</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="mouseTracking">
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Image Matching</string>
+         <string/>
         </property>
         <property name="checkable">
          <bool>true</bool>
         </property>
         <property name="checked">
          <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_Image_Matching">
+        <property name="text">
+         <string>Image Matching</string>
         </property>
        </widget>
       </item>
@@ -233,14 +294,30 @@
      <layout class="QHBoxLayout" name="horizontalLayout_6">
       <item>
        <widget class="QCheckBox" name="checkBox_Create_Model">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>20</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="mouseTracking">
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Create Model</string>
+         <string/>
         </property>
         <property name="checkable">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_Create_Model">
+        <property name="text">
+         <string>Create Model</string>
         </property>
        </widget>
       </item>

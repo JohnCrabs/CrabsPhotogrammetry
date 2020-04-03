@@ -373,25 +373,11 @@ class Window:
         self.WinCrabSFM.show()
 
     def crabSFM_default_runtime_checkboxes(self):
-        self.ui_crabSFM.checkBox_Camera.setCheckable(self.UP)
         self.ui_crabSFM.checkBox_Camera.setChecked(self.DOWN)
-        self.ui_crabSFM.checkBox_Camera.setCheckable(self.DOWN)
-
-        self.ui_crabSFM.checkBox_Block_Creation.setCheckable(self.UP)
         self.ui_crabSFM.checkBox_Block_Creation.setChecked(self.DOWN)
-        self.ui_crabSFM.checkBox_Block_Creation.setCheckable(self.DOWN)
-
-        self.ui_crabSFM.checkBox_Find_Feature_Points.setCheckable(self.UP)
         self.ui_crabSFM.checkBox_Find_Feature_Points.setChecked(self.DOWN)
-        self.ui_crabSFM.checkBox_Find_Feature_Points.setCheckable(self.DOWN)
-
-        self.ui_crabSFM.checkBox_Image_Matching.setCheckable(self.UP)
         self.ui_crabSFM.checkBox_Image_Matching.setChecked(self.DOWN)
-        self.ui_crabSFM.checkBox_Image_Matching.setCheckable(self.DOWN)
-
-        self.ui_crabSFM.checkBox_Create_Model.setCheckable(self.UP)
         self.ui_crabSFM.checkBox_Create_Model.setChecked(self.DOWN)
-        self.ui_crabSFM.checkBox_Create_Model.setCheckable(self.DOWN)
 
     def crabSFM_default_options(self):
         self.ui_crabSFM.radio_approximate_interion_orientation.setChecked(self.UP)
@@ -401,14 +387,18 @@ class Window:
     def crabSFM_cancel(self):
         self.WinCrabSFM.close()
 
+    def crabSFM_window_update(self):
+        self.WinCrabSFM.update()
+        self.WinCrabSFM.repaint()
+
     def crabSFM_compute(self):
         self.crabSFM_default_runtime_checkboxes()
         # Camera Settings
         if self.ui_crabSFM.radio_approximate_interion_orientation.isChecked():
             self.image_approximate_camera(show_message=False)
-        self.ui_crabSFM.checkBox_Camera.setCheckable(self.UP)
         self.ui_crabSFM.checkBox_Camera.setChecked(self.UP)
-        #self.ui_crabSFM.checkBox_Camera.setCheckable(self.DOWN)
+        self.crabSFM_window_update()
+
         # Feature Points
         if self.ui_crabSFM.radio_SIFT.isChecked():
             self.image_find_feature_points(flag=IMG_SIFT, show_message=False)
@@ -420,25 +410,25 @@ class Window:
             self.image_find_feature_points(flag=IMG_AKAZE, show_message=False)
         self.ui_crabSFM.checkBox_Block_Creation.setCheckable(self.UP)
         self.ui_crabSFM.checkBox_Block_Creation.setChecked(self.UP)
-        self.ui_crabSFM.checkBox_Block_Creation.setCheckable(self.DOWN)
+        self.crabSFM_window_update()
+
         # Create Block
         self.image_create_block(show_message=False)
-        self.ui_crabSFM.checkBox_Find_Feature_Points.setCheckable(self.UP)
         self.ui_crabSFM.checkBox_Find_Feature_Points.setChecked(self.UP)
-        self.ui_crabSFM.checkBox_Find_Feature_Points.setCheckable(self.DOWN)
+        self.crabSFM_window_update()
+
         # Image Matching
         if self.ui_crabSFM.radio_Match_All_Images.isChecked():
             self.image_matching(fast=False, show_message=False)
         elif self.ui_crabSFM.radio_Fast_Matching.isChecked():
             self.image_matching(fast=True, show_message=False)
-        self.ui_crabSFM.checkBox_Image_Matching.setCheckable(self.UP)
         self.ui_crabSFM.checkBox_Image_Matching.setChecked(self.UP)
-        self.ui_crabSFM.checkBox_Image_Matching.setCheckable(self.DOWN)
+        self.crabSFM_window_update()
+
         # Create Model
         self.image_create_model(show_message=False)
-        self.ui_crabSFM.checkBox_Create_Model.setCheckable(self.UP)
         self.ui_crabSFM.checkBox_Create_Model.setChecked(self.UP)
-        self.ui_crabSFM.checkBox_Create_Model.setCheckable(self.DOWN)
+        self.crabSFM_window_update()
 
     # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
     def simgv_open(self):

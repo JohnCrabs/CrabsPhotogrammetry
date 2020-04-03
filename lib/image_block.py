@@ -2,6 +2,11 @@ from lib.image import *
 from lib.global_functions import *
 from lib.point import *
 from lib.color import *
+from lib.rigid_transform_3D import *
+
+import math as mth
+import os
+import sys
 
 LOWE_RATIO = 0.9
 INLIER_RATIO = 0.3
@@ -219,7 +224,7 @@ class BlockModel:
         self.landmark_count_duplicates = []
         self.landmark_colors = []
 
-    def b_model_create_landmark_model(self, pair_model_list: [], table_id_list: []):
+    def b_model_create_landmark_model(self, pair_model_list: [], table_id_list: [], exportCloud=""):
         # Debugging message lines
         print("")
         message_print("Create Model from Pair Models.")
@@ -231,7 +236,7 @@ class BlockModel:
             pairSize += model_size - i  # solve the equation
 
         pairCounter = 1  # set a pair counter
-        landmarkCounter = 0  # set a landmark counter
+        # landmarkCounter = 0  # set a landmark counter
         pair_model_list_size = len(pair_model_list)  # find the size of pair model list
         for m_index_L in range(0, pair_model_list_size - 1):  # for each model
             pm_L = pair_model_list[m_index_L]  # take the left model
@@ -316,7 +321,7 @@ class BlockModel:
 
                 message_print("Found %d" % len(points_src) + " cloud matching points.")
                 if len(points_src) > 10:
-                    print_message("Calculate scale.")
+                    message_print("Calculate scale.")
                     scale, scale_error = find_scale_parameter(points_src, points_dst)
                     print("Scale = ", scale)
                     print("Scale_error = ", scale_error)
@@ -325,7 +330,7 @@ class BlockModel:
                     print_message("Too few matching points. Cannot match these pairs")
                     break
 
-                print_message("Scale model " + img_R_L_name + "-" + img_R_R_name)
+                message_print("Scale model " + img_R_L_name + "-" + img_R_R_name)
 
                 pm_R.scale_model(scale)
                 exp_points = pm_R.points
@@ -354,10 +359,10 @@ class BlockModel:
                 R, t = rigid_transform_3D(points_dst_t, points_src_t)
 
                 print("")
-                print_message("Rotation Mtrx = ")
+                message_print("Rotation Mtrx = ")
                 print(R)
                 print("")
-                print_message("Translation Mtrx = ")
+                message_print("Translation Mtrx = ")
                 print(t)
                 pm_R.rotate_translate_model(R, t)
                 exp_points = pm_R.points
@@ -367,7 +372,14 @@ class BlockModel:
                     message = "Export Rotate + Translate Pair Model as : " + exportName
                     print_message(message)
                     export_as_ply(exp_points, exp_colors, exportName)
+                else:
+                    exportCloud_tmp = "tmp_ply/"
+                    if not os.path.exists(exportCloud_tmp):
+                        os.mkdir(exportCloud_tmp)
+                    exportName = exportCloud_tmp + img_R_L_name + "_" + img_R_R_name + "_R_t.ply"
+                    export_as_ply(exp_points, exp_colors, exportName)
 
+                """
                 if landmarkCounter == 0:
                     self.landmark_points = exp_points
                     self.landmark_colors = exp_colors
@@ -375,9 +387,9 @@ class BlockModel:
                         self.landmark_shown.append(1)
 
                     landmarkCounter += 1
-
                 else:
                     pass
+                """
 
                 pairCounter += 1
 
@@ -830,3 +842,56 @@ class ImageBlock:
 
     def b_img_create_block_model(self):
         self.block_model.b_model_create_landmark_model(self.pair_model, self.block_match_list)
+
+
+# Other Useful Function #
+
+def find_scale_parameter(pnt_cloud_1: [], pnt_cloud_2: []):
+    points_src = np.array(pnt_cloud_1)
+    points_dst = np.array(pnt_cloud_2)
+    scale_list = []
+    #scale = 0
+    #scale_count = 0
+    point_list_size = len(points_src)
+    if point_list_size > 1000:
+        point_list_size = 1000
+
+    for p_id_1 in range(0, point_list_size - 1):
+        x1_1 = points_src[p_id_1][0]
+        y1_1 = points_src[p_id_1][1]
+        z1_1 = points_src[p_id_1][2]
+
+        x2_1 = points_dst[p_id_1][0]
+        y2_1 = points_dst[p_id_1][1]
+        z2_1 = points_dst[p_id_1][2]
+
+        for p_id_2 in range(p_id_1 + 1, point_list_size):
+            x1_2 = points_src[p_id_2][0]
+            y1_2 = points_src[p_id_2][1]
+            z1_2 = points_src[p_id_2][2]
+
+            x2_2 = points_dst[p_id_2][0]
+            y2_2 = points_dst[p_id_2][1]
+            z2_2 = points_dst[p_id_2][2]
+
+            dx_1 = float(x1_1 - x1_2)
+            dy_1 = float(y1_1 - y1_2)
+            dz_1 = float(z1_1 - z1_2)
+
+            dx_2 = float(x2_1 - x2_2)
+            dy_2 = float(y2_1 - y2_2)
+            dz_2 = float(z2_1 - z2_2)
+
+            dist1 = mth.sqrt(dx_1 * dx_1 + dy_1 * dy_1 + dz_1 * dz_1)
+            dist2 = mth.sqrt(dx_2 * dx_2 + dy_2 * dy_2 + dz_2 * dz_2)
+
+            if dist2 != 0:
+                scale_val = dist1 / dist2
+                scale_list.append(scale_val)
+                #scale += scale_val
+                #scale_count += 1
+
+    scale = np.mean(scale_list)
+    scale_error = np.std(scale_list)
+
+    return scale, scale_error
