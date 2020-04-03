@@ -122,8 +122,6 @@ class Landmark:
         id_list.append(img_index_R)
         self.match_id_list = id_list
 
-        return points, colors, id_list
-
 
 class PairModel:
     id = 0
@@ -386,6 +384,8 @@ class ImageBlock:
 
         self.img_matches = []  # A list of ImageMatches class items (store all matching information)
         self.block_match_list = []  # A list which contains all id matches
+
+        self.pair_model = []  # A list or PairModel class items (store all early point clouds)
 
     # *** IMAGE LIST *** #
     def b_img_create_image_list(self, img_list):
@@ -799,7 +799,7 @@ class ImageBlock:
                 pair_model_tmp = PairModel()
 
                 # Take the
-                exp_points, exp_colors, exp_id = transform_landmark_to_list_items(landmark_debugging_list)
+                exp_points, exp_colors, exp_id = self.b_img_transform_landmark_to_list_items(landmark_debugging_list)
 
                 # ---------------------------------------------------------------------------------------------- #
                 # These lines are from another version. I leave them here for a quick debugging
@@ -809,8 +809,7 @@ class ImageBlock:
                 # message_print(message)
                 # export_as_ply(exp_points, exp_colors, exportName)
                 # ---------------------------------------------------------------------------------------------- #
-
-                pair_model_tmp.set_model(pairModelCounter, exp_id, exp_points, exp_colors)
+                pair_model_tmp.set_model(pairModelCounter, imgL.info.id, imgR.info.id,  exp_id, exp_points, exp_colors)
                 self.pair_model.append(pair_model_tmp)
             else:
                 # Debugging message line
