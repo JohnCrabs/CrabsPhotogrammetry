@@ -217,7 +217,7 @@ class BlockModel:
     landmark = []
     landmark_colors = []
 
-    def create_landmark_model(self, pair_model_list: [], table_id_list: [], exportCloud=""):
+    def create_landmark_model(self, pair_model_list: [], table_id_list: []):
         print("")
         print_message("Create Model from Pair Models.")
 
@@ -386,6 +386,7 @@ class ImageBlock:
         self.block_match_list = []  # A list which contains all id matches
 
         self.pair_model = []  # A list or PairModel class items (store all early point clouds)
+        self.block_model = BlockModel()  # Create a block model item
 
     # *** IMAGE LIST *** #
     def b_img_create_image_list(self, img_list):
@@ -821,5 +822,5 @@ class ImageBlock:
                 imgR.set_starting_projection_matrix(imgL.P_mtrx)  # Set L projection matrix as R projection matrix
             matchCounter += 1  # increase the matchCounter
 
-    def b_img_create_block_models(self):
-        self.l_block_model.create_landmark_model(self.pair_model, self.block_match_list)
+    def b_img_create_block_model(self):
+        self.block_model.create_landmark_model(self.pair_model, self.block_match_list)
