@@ -2,6 +2,7 @@ import sys
 from ui_wins.mainwin import *
 from ui_wins.video2images import *
 from ui_wins.simple_image_viewer import *
+from ui_wins.win_crabSFM import *
 
 from PyQt5.Qt import (Qt, QDialog, QDir, QFileDialog, QListWidgetItem, QMessageBox, QWidget, QLabel, QPixmap, QImage,
                       QSize, QCheckBox)
@@ -90,6 +91,11 @@ class Window:
         self.SimpleImageViewer = QDialog()
         self.ui_simple_img_viewer.setupUi(self.SimpleImageViewer)
 
+        # *** CRABS SFM UI *** #
+        self.ui_crabSFM = Ui_CrabsSFM()
+        self.WinCrabSFM = QDialog()
+        self.ui_crabSFM.setupUi(self.WinCrabSFM)
+
         # ------------------------
         # Setting up ends here
         # ---------------------------------------------------------------------------------------------------------- #
@@ -114,6 +120,7 @@ class Window:
         self.ui_main_win.actionAll_Images_Matching.triggered.connect(lambda: self.image_matching(fast=False))
         self.ui_main_win.actionFast_Matching.triggered.connect(lambda: self.image_matching(fast=True))
         self.ui_main_win.actionCreate_Model.triggered.connect(self.image_create_model)
+        self.ui_main_win.actionCrabSFM.triggered.connect(self.image_crabsSFM)
 
         # *** SIMPLE IMAGE VIEWER *** #
         self.ui_simple_img_viewer.button_previous.clicked.connect(self.simgv_button_previous)
@@ -187,6 +194,7 @@ class Window:
                     item_widget.setCheckState(QtCore.Qt.Checked)  # Set it checked
                     self.ui_main_win.listImage.addItem(item_widget)  # Add item to list
                     self.ui_main_win.menuCamera_Settings.setEnabled(self.UP)  # Enable Camera menu
+                    self.ui_main_win.actionCrabSFM.setEnabled(self.UP)  # Enable SFM action
 
     def image_delete(self):
         """
@@ -345,6 +353,21 @@ class Window:
         message_box_widget = QWidget()  # create QWidget
         QMessageBox.information(message_box_widget, "Create Model",
                                 "Process finished successfully!")  # message information
+
+    # *** CRABS SFM UI*** #
+    def crabsSFM_open(self):
+        self.WinCrabSFM.show()
+
+    def crabsSFM_default_options(self):
+        self.ui_crabSFM.radio_approximate_interion_orientation.setChecked(self.UP)
+        self.ui_crabSFM.radio_AKAZE.setChecked(self.UP)
+        self.ui_crabSFM.radio_Match_All_Images(self.UP)
+
+    def crabsSFM_default_runtime_checkboxes(self):
+        self.ui_crabSFM.checkBox_Camera.setChecked(self.DOWN)
+        self.ui_crabSFM.checkBox_Block_Creation.setChecked(self.DOWN)
+        self.ui_crabSFM.checkBox_Find_Feature_Points.setChecked(self.DOWN)
+        self.ui_crabSFM.checkBox_Image_Matching.setChecked(self.DOWN)
 
     # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
     def simgv_open(self):
