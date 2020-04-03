@@ -778,7 +778,7 @@ class ImageBlock:
 
                         pt3d = Point3d_float()  # Create a Point3d_float() object
 
-                        # I chose to use this way rathen than my build in set_point(x,y,z) function
+                        # I chose to use this way rather than my build in set_point(x,y,z) function
                         # for code reading simplicity.
                         pt3d.x = points4D[0][l_index] / points4D[3][l_index]  # Set x value
                         pt3d.y = points4D[1][l_index] / points4D[3][l_index]  # Set y value
