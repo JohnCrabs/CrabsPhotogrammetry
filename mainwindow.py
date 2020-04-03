@@ -341,6 +341,7 @@ class Window:
 
     def image_create_model(self):
         self.image_block.b_img_create_pair_models()
+        self.image_block.b_img_create_block_model()
         message_box_widget = QWidget()  # create QWidget
         QMessageBox.information(message_box_widget, "Create Model",
                                 "Process finished successfully!")  # message information
