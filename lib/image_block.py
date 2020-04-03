@@ -1,6 +1,7 @@
 from lib.image import *
 from lib.global_functions import *
 from lib.point import *
+from lib.color import *
 
 LOWE_RATIO = 0.9
 INLIER_RATIO = 0.3
@@ -88,23 +89,23 @@ class ImageMatches:
 
 class Landmark:
     l_id: int
-    pnt3d: Point3d
-    color: Color
+    pnt3d: Point3d_float()
+    color: ColorRGB()
     seen = 0
 
     match_id_list = []
 
     def set_landmark(self, l_id: int, x: float, y: float, z: float, seen: int, r=0, g=0, b=0):
         self.l_id = l_id
-        pnt = Point3d()
+        pnt = Point3d_float()
         pnt.set_point(x, y, z)
         self.pnt3d = pnt
-        col = Color()
+        col = ColorRGB()
         col.set_color(r, g, b)
         self.color = col
         self.seen = seen
 
-    def append_pnt3d(self, pnt: Point3d):
+    def append_pnt3d(self, pnt: Point3d_float):
         self.pnt3d.x += pnt.x
         self.pnt3d.y += pnt.y
         self.pnt3d.z += pnt.z
@@ -120,6 +121,8 @@ class Landmark:
         id_list.append(img_index_L)
         id_list.append(img_index_R)
         self.match_id_list = id_list
+
+        return points, colors, id_list
 
 
 class PairModel:
@@ -229,9 +232,9 @@ class BlockModel:
         pairCounter = 1
         landmarkCounter = 0
         pair_model_list_size = len(pair_model_list)
-        for m_index_L in range(0, pair_model_list_size-1):
+        for m_index_L in range(0, pair_model_list_size - 1):
             pm_L = pair_model_list[m_index_L]
-            for m_index_R in range(m_index_L+1, pair_model_list_size):
+            for m_index_R in range(m_index_L + 1, pair_model_list_size):
                 pm_R = pair_model_list[m_index_R]
 
                 pm_L_img_L_id = pm_L.imgL_id
@@ -255,8 +258,8 @@ class BlockModel:
 
                 if pm_L_img_L_id == pm_R_img_L_id:
                     for l_id in range(0, len(table_id_list[pm_L_img_L_id])):
-                        pm_L_id = table_id_list[pm_L_img_L_id][l_id][pm_L_img_R_id-pm_L_img_L_id]
-                        pm_R_id = table_id_list[pm_L_img_L_id][l_id][pm_R_img_R_id-pm_R_img_L_id]
+                        pm_L_id = table_id_list[pm_L_img_L_id][l_id][pm_L_img_R_id - pm_L_img_L_id]
+                        pm_R_id = table_id_list[pm_L_img_L_id][l_id][pm_R_img_R_id - pm_R_img_L_id]
                         if pm_L_id != -1 and pm_R_id != -1:
                             pm_L_pnt_index = pm_L.find_index_with_R_id(pm_L_id)
                             pm_R_pnt_index = pm_R.find_index_with_R_id(pm_R_id)
@@ -265,7 +268,7 @@ class BlockModel:
                                 tmp.append(pm_L_pnt_index)
                                 tmp.append(pm_R_pnt_index)
                                 pm_id_list_tmp.append(tmp)
-                                #print(pm_L_pnt_index, pm_L_id, pm_R_pnt_index, pm_R_id)
+                                # print(pm_L_pnt_index, pm_L_id, pm_R_pnt_index, pm_R_id)
                 elif pm_L_img_R_id == pm_R_img_L_id:
                     for l_id in range(0, len(table_id_list[pm_L_img_L_id])):
                         pm_L_id_r = table_id_list[pm_L_img_L_id][l_id][pm_L_img_R_id - pm_L_img_L_id]
@@ -283,13 +286,13 @@ class BlockModel:
                                             tmp.append(pm_L_pnt_index)
                                             tmp.append(pm_R_pnt_index)
                                             pm_id_list_tmp.append(tmp)
-                                         # print(pm_L_pnt_index, pm_L_id, pm_R_pnt_index, pm_R_id)
+                                        # print(pm_L_pnt_index, pm_L_id, pm_R_pnt_index, pm_R_id)
                 else:
                     print_message("Cannot match pairs without same images.")
                     break
 
                 # print(debugging_test)
-                #print(len(pm_id_list_tmp))
+                # print(len(pm_id_list_tmp))
                 # print(pm_id_list_tmp)
                 points_src = []
                 points_dst = []
@@ -339,10 +342,10 @@ class BlockModel:
                 points_src = np.array(points_src)
                 points_dst = np.array(points_dst)
 
-                #print(len(points_src))
-                #print(len(points_dst))
+                # print(len(points_src))
+                # print(len(points_dst))
 
-                #print(points_src)
+                # print(points_src)
                 points_src_t = points_src.T
                 points_dst_t = points_dst.T
 
@@ -423,7 +426,7 @@ class ImageBlock:
         # Find the Number of feature matching
         matchSize = 0  # set a matchSize counter
         block_size = len(self.img_list)  # blockSize = number of images
-        for i in range(1, block_size):   # for i in range(1, block_size) => matchSize = Sum_{i=1}^{N}(blockSize - i)
+        for i in range(1, block_size):  # for i in range(1, block_size) => matchSize = Sum_{i=1}^{N}(blockSize - i)
             matchSize += block_size - i  # perform the previous equation
         return matchSize  # return matchSize
 
@@ -597,14 +600,14 @@ class ImageBlock:
     def b_img_create_block_match_list(self):
         block_match_list_tmp = []  # create block image list
 
-        for img_id in range(0, len(self.img_list)-1):  # for img_id in range(0, img_list_size -1 )
+        for img_id in range(0, len(self.img_list) - 1):  # for img_id in range(0, img_list_size -1 )
             img = self.img_list[img_id]  # copy img from img list
             kp_ids = img.feature_points.keypoints  # copy key points id
 
             match_list_tmp = []  # create match list tmp
             for i in range(0, len(kp_ids)):  # for all keypoints id
                 tmp = [i]  # set i to tmp list
-                for j in range(img.info.id+1, len(self.img_list)):  # for all images
+                for j in range(img.info.id + 1, len(self.img_list)):  # for all images
                     tmp.append(-1)  # append -1 (value that indicates no match)
                 match_list_tmp.append(tmp)  # append it to match_list_tmp
             # print(match_list_tmp)
@@ -618,10 +621,34 @@ class ImageBlock:
             match_ids_L = m.f_pts_indexes_L  # take the feature points ids for left image
             match_ids_R = m.f_pts_indexes_R  # take the feature points ids for right image
             for index in range(0, len(match_ids_L)):  # for all matches
-                block_match_list_tmp[imgL_id][match_ids_L[index]][imgR_id-imgL_id] = match_ids_R[index]  # set table
+                block_match_list_tmp[imgL_id][match_ids_L[index]][imgR_id - imgL_id] = match_ids_R[index]  # set table
             # print(block_match_list_tmp[imgL_id])
         self.block_match_list = block_match_list_tmp  # save it to block match list
         # print(self.block_match_list)  # print list for debugging
+
+    def b_img_transform_landmark_to_list_items(self, landmark: []):
+        points = []
+        colors = []
+        id_list = []
+        for l_pnt in landmark:
+            x = l_pnt.pnt3d.x
+            y = l_pnt.pnt3d.y
+            z = l_pnt.pnt3d.z
+            r = l_pnt.color.r
+            g = l_pnt.color.g
+            b = l_pnt.color.b
+            pt_tmp = [x, y, z]
+            # col = [0, 0, 0]
+            col = [r, g, b]
+            # print(col)
+            points.append(pt_tmp)
+            colors.append(col)
+            id_list.append(l_pnt.match_id_list)
+            # print(pt_tmp)
+        points = np.array(points)
+        colors = np.array(colors)
+        id_list = np.array(id_list)
+        return points, colors, id_list
 
     def b_img_create_pair_models(self):
         print("")
@@ -716,14 +743,14 @@ class ImageBlock:
                     imgR.img_set_starting_pose_matrix(pose_mtrx_R)  # Set the pose matrix to the right img
                     imgR.img_set_starting_projection_matrix(proj_mtrx_R_P)  # Set the projection matrix to the right img
 
-                #print("")
-                #print("pose_mtrx_L = \n", pose_mtrx_L_T)  # Uncomment for debug
-                #print("")
-                #print("pose_mtrx_R = \n", pose_mtrx_R.T_mtrx)  # Uncomment for debug
-                #print("")
-                #print("proj_mtrx_L = \n", proj_mtrx_L_P)  # Uncomment for debug
-                #print("")
-                #print("proj_mtrx_R = \n", proj_mtrx_R_P.P_mtrx)  # Uncomment for debug
+                # print("")
+                # print("pose_mtrx_L = \n", pose_mtrx_L_T)  # Uncomment for debug
+                # print("")
+                # print("pose_mtrx_R = \n", pose_mtrx_R.T_mtrx)  # Uncomment for debug
+                # print("")
+                # print("proj_mtrx_L = \n", proj_mtrx_L_P)  # Uncomment for debug
+                # print("")
+                # print("proj_mtrx_R = \n", proj_mtrx_R_P.P_mtrx)  # Uncomment for debug
 
                 # Triangulate
                 proj_mtrx_R_P = proj_mtrx_R_P.P_mtrx  # Change the object from ProjectionMatrix() to P_mtrx list
@@ -746,8 +773,8 @@ class ImageBlock:
                 # print(pts_inlier_R_id)
                 for l_index in range(0, g_p_size):  # for all left indexes
                     if poseMask[l_index] != 0:  # check in poseMask for the good points
-                        #print(poseMask[l_index]) # Uncomment for debugging
-                        #print(l_index)  # Uncomment for debugging
+                        # print(poseMask[l_index]) # Uncomment for debugging
+                        # print(l_index)  # Uncomment for debugging
 
                         pt3d = Point3d_float()  # Create a Point3d_float() object
 
@@ -771,11 +798,13 @@ class ImageBlock:
                         landmarkCounter += 1
                 pair_model_tmp = PairModel()
 
-                #---------------------------------------------------------------------------------------------- #
+                # Take the
+                exp_points, exp_colors, exp_id = transform_landmark_to_list_items(landmark_debugging_list)
+
+                # ---------------------------------------------------------------------------------------------- #
                 # These lines are from another version. I leave them here for a quick debugging
                 # ---------------------------------------------------------------------------------------------- #
                 # exportName = exportPath + imgL_name + "_" + imgR_name + ".ply"
-                # exp_points, exp_colors, exp_id = transform_landmark_to_list_items(landmark_debugging_list)
                 # message = "Export Pair Model as : " + exportName
                 # message_print(message)
                 # export_as_ply(exp_points, exp_colors, exportName)
