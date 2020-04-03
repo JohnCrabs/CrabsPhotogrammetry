@@ -820,3 +820,6 @@ class ImageBlock:
                 imgR.set_starting_pose_matrix(imgL.T_mtrx)  # Set left pose matrix as right pose matrix
                 imgR.set_starting_projection_matrix(imgL.P_mtrx)  # Set L projection matrix as R projection matrix
             matchCounter += 1  # increase the matchCounter
+
+    def b_img_create_block_models(self):
+        self.l_block_model.create_landmark_model(self.pair_model, self.block_match_list)
