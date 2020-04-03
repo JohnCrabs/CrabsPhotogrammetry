@@ -1,4 +1,5 @@
 import sys
+import threading
 from ui_wins.mainwin import *
 from ui_wins.video2images import *
 from ui_wins.simple_image_viewer import *
@@ -128,7 +129,7 @@ class Window:
 
         # *** CrabSFM UI *** #
         self.ui_crabSFM.button_cancel.clicked.connect(self.crabSFM_cancel)
-        self.ui_crabSFM.button_compute.clicked.connect(self.crabSFM_compute)
+        self.ui_crabSFM.button_compute.clicked.connect(self.crabSFM_compute_threading)
 
         # *** VIDEO *** #
         self.ui_main_win.actionVideoImport.triggered.connect(self.video_import)  # actionVideoImport
@@ -306,6 +307,10 @@ class Window:
         """
         image_list_tmp = []  # create a temporary image list
         image_list_size = len(self.image_list)  # take the size of the actual list
+
+        # for image in self.image_list:
+        #    print(image.info.name)
+
         success = False  # set success boolean to False
         counter = 0  # set image in image_list_tmp counter to 0
         for index_id in range(0, image_list_size):  # for index id in range(0, list_size)
@@ -429,6 +434,10 @@ class Window:
         self.image_create_model(show_message=False)
         self.ui_crabSFM.checkBox_Create_Model.setChecked(self.UP)
         self.crabSFM_window_update()
+
+    def crabSFM_compute_threading(self):
+        t = threading.Thread(self.crabSFM_compute())
+        t.start()
 
     # *** SIMPLE IMAGE VIEWER (SIMGV) *** #
     def simgv_open(self):

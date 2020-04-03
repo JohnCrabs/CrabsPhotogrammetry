@@ -11,9 +11,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_CrabsSFM(object):
     def setupUi(self, CrabsSFM):
         CrabsSFM.setObjectName("CrabsSFM")
-        CrabsSFM.resize(600, 480)
-        CrabsSFM.setMinimumSize(QtCore.QSize(600, 480))
+        CrabsSFM.setWindowModality(QtCore.Qt.WindowModal)
+        CrabsSFM.resize(599, 479)
+        CrabsSFM.setMinimumSize(QtCore.QSize(599, 479))
         CrabsSFM.setMaximumSize(QtCore.QSize(600, 480))
+        CrabsSFM.setSizeGripEnabled(False)
+        CrabsSFM.setModal(False)
         self.verticalLayout = QtWidgets.QVBoxLayout(CrabsSFM)
         self.verticalLayout.setObjectName("verticalLayout")
         self.line_5 = QtWidgets.QFrame(CrabsSFM)
@@ -174,7 +177,7 @@ class Ui_CrabsSFM(object):
         self.widget_buttons.setObjectName("widget_buttons")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.widget_buttons)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        spacerItem1 = QtWidgets.QSpacerItem(389, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(388, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem1)
         self.button_cancel = QtWidgets.QPushButton(self.widget_buttons)
         self.button_cancel.setObjectName("button_cancel")

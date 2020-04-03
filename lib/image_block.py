@@ -295,7 +295,7 @@ class BlockModel:
                                             pm_id_list_tmp.append(tmp)
                                         # print(pm_L_pnt_index, pm_L_id, pm_R_pnt_index, pm_R_id)
                 else:
-                    print_message("Cannot match pairs without same images.")
+                    message_print("Cannot match pairs without same images.")
                     break
 
                 # print(debugging_test)
@@ -327,7 +327,7 @@ class BlockModel:
                     print("Scale_error = ", scale_error)
 
                 else:
-                    print_message("Too few matching points. Cannot match these pairs")
+                    message_print("Too few matching points. Cannot match these pairs")
                     break
 
                 message_print("Scale model " + img_R_L_name + "-" + img_R_R_name)
@@ -338,7 +338,7 @@ class BlockModel:
                 if exportCloud != "":
                     exportName = exportCloud + img_R_L_name + "_" + img_R_R_name + "_scale.ply"
                     message = "Export Scale Pair Model as : " + exportName
-                    print_message(message)
+                    message_print(message)
                     export_as_ply(exp_points, exp_colors, exportName)
 
                 points_dst = []
@@ -370,7 +370,7 @@ class BlockModel:
                 if exportCloud != "":
                     exportName = exportCloud + "final/" + img_R_L_name + "_" + img_R_R_name + "_R_t.ply"
                     message = "Export Rotate + Translate Pair Model as : " + exportName
-                    print_message(message)
+                    message_print(message)
                     export_as_ply(exp_points, exp_colors, exportName)
                 else:
                     exportCloud_tmp = "tmp_ply/"
@@ -590,7 +590,7 @@ class ImageBlock:
         block_size = len(self.img_list)
         for imgL_index in range(0, block_size - 1):
             for imgR_index in range(imgL_index + 1, block_size):
-                self.b_img_match_pairs(matcher, imgL_index, imgL_index + 1, matchCounter, matchSize)
+                self.b_img_match_pairs(matcher, imgL_index, imgR_index, matchCounter, matchSize)
                 matchCounter += 1  # increase the matchCounter
         self.b_img_create_block_match_list()
 
@@ -738,28 +738,30 @@ class ImageBlock:
                 proj_mtrx_img_0.set_starting_projection_matrix(imgL.camera.mtrx)  # set starting projection matrix
                 imgL.img_set_starting_projection_matrix(proj_mtrx_img_0)  # set starting projection matrix to imgL
 
+            # Create the pose matrices.
+            # Create the Pose and Projection Matrices
+            # Debugging message line
+            message_print("Calculate Pose Matrices:")
+
+            pose_mtrx_L_T = imgL.T_mtrx.T_mtrx  # take the pose matrix of the left image
+
+            pose_mtrx_R = PoseMatrix()  # Create PoseMatrix object for the right image
+            pose_mtrx_R.setPoseMatrix_R_t(R, t)  # Set pose matrix using R, t values (taken from Essential Matrix)
+            pose_mtrx_R.set_pose_mtrx_using_pair(pose_mtrx_L_T)  # Finalize pose matrix using the T_mtrx_L
+
+            proj_mtrx_L_P = imgL.P_mtrx.P_mtrx  # take the projection matrix of the left image
+
+            R, t = pose_mtrx_R.take_R_and_t()  # Find the new R,t values of the right image (taken from pose matrix)
+            proj_mtrx_R_P = ProjectionMatrix()  # Create projection matrix object
+            proj_mtrx_R_P.set_projection_matrix_from_pose(R, t, imgR.camera.mtrx)  # Set the projection matrix
+
+            if (imgR.info.id - imgL.info.id) == 1:  # Check if the images are sequential
+                imgR.img_set_starting_pose_matrix(pose_mtrx_R)  # Set the pose matrix to the right img
+                imgR.img_set_starting_projection_matrix(proj_mtrx_R_P)  # Set the projection matrix to the right img
+
             landmark_debugging_list = []  # Create landmark list (for debugging)
             if poseVal > POSE_RATIO * g_p_size and match.is_good:  # check if we have good match points
-                # Create the pose matrices.
-                # Create the Pose and Projection Matrices
-                # Debugging message line
-                message_print("Calculate Pose Matrices:")
 
-                pose_mtrx_L_T = imgL.T_mtrx.T_mtrx  # take the pose matrix of the left image
-
-                pose_mtrx_R = PoseMatrix()  # Create PoseMatrix object for the right image
-                pose_mtrx_R.setPoseMatrix_R_t(R, t)  # Set pose matrix using R, t values (taken from Essential Matrix)
-                pose_mtrx_R.set_pose_mtrx_using_pair(pose_mtrx_L_T)  # Finalize pose matrix using the T_mtrx_L
-
-                proj_mtrx_L_P = imgL.P_mtrx.P_mtrx  # take the projection matrix of the left image
-
-                R, t = pose_mtrx_R.take_R_and_t()  # Find the new R,t values of the right image (taken from pose matrix)
-                proj_mtrx_R_P = ProjectionMatrix()  # Create projection matrix object
-                proj_mtrx_R_P.set_projection_matrix_from_pose(R, t, imgR.camera.mtrx)  # Set the projection matrix
-
-                if (imgR.info.id - imgL.info.id) == 1:  # Check if the images are sequential
-                    imgR.img_set_starting_pose_matrix(pose_mtrx_R)  # Set the pose matrix to the right img
-                    imgR.img_set_starting_projection_matrix(proj_mtrx_R_P)  # Set the projection matrix to the right img
 
                 # print("")
                 # print("pose_mtrx_L = \n", pose_mtrx_L_T)  # Uncomment for debug
@@ -836,8 +838,8 @@ class ImageBlock:
                           ", due to few points."
                 message_print(message)
 
-                imgR.img_set_starting_pose_matrix(imgL.T_mtrx)  # Set left pose matrix as right pose matrix
-                imgR.img_set_starting_projection_matrix(imgL.P_mtrx)  # Set L projection matrix as R projection matrix
+                # imgR.img_set_starting_pose_matrix(imgL.T_mtrx)  # Set left pose matrix as right pose matrix
+                # imgR.img_set_starting_projection_matrix(imgL.P_mtrx)  # Set L projection matrix as R projection matrix
             matchCounter += 1  # increase the matchCounter
 
     def b_img_create_block_model(self):
