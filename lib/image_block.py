@@ -219,7 +219,7 @@ class BlockModel:
 
     def create_landmark_model(self, pair_model_list: [], table_id_list: []):
         print("")
-        print_message("Create Model from Pair Models.")
+        message_print("Create Model from Pair Models.")
 
         # Find the Number of feature matching
         pairSize = 0
@@ -359,7 +359,7 @@ class BlockModel:
                 exp_points = pm_R.points
                 exp_colors = pm_R.colors
                 if exportCloud != "":
-                    exportName = exportCloud + "finalβλέ/" + img_R_L_name + "_" + img_R_R_name + "_R_t.ply"
+                    exportName = exportCloud + "final/" + img_R_L_name + "_" + img_R_R_name + "_R_t.ply"
                     message = "Export Rotate + Translate Pair Model as : " + exportName
                     print_message(message)
                     export_as_ply(exp_points, exp_colors, exportName)
@@ -652,6 +652,7 @@ class ImageBlock:
         return points, colors, id_list
 
     def b_img_create_pair_models(self):
+        # Debugging message lines
         print("")
         message_print("Find Landmarks")
 
