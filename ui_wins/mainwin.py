@@ -185,6 +185,7 @@ class Ui_MainWindow(object):
         self.actionCreate_Model.setEnabled(False)
         self.actionCreate_Model.setObjectName("actionCreate_Model")
         self.actionCrabSFM = QtWidgets.QAction(MainWindow)
+        self.actionCrabSFM.setEnabled(False)
         self.actionCrabSFM.setObjectName("actionCrabSFM")
         self.menuFind_Feature_Points.addAction(self.actionSIFT)
         self.menuFind_Feature_Points.addAction(self.actionSURF)

@@ -124,23 +124,24 @@ class Landmark:
 
 
 class PairModel:
-    id = 0
-    imgL_id = 0
-    imgR_id = 0
-    imgL_name: str
-    imgR_name: str
-    points = []
-    colors = []
-    id_L_R_list = []
-    Xo = 0
-    Yo = 0
-    Zo = 0
+    def __init__(self):
+        self.id = 0
+        self.imgL_id = 0
+        self.imgR_id = 0
+        self.imgL_name: str
+        self.imgR_name: str
+        self.points = []
+        self.colors = []
+        self.id_L_R_list = []
+        self.Xo = 0
+        self.Yo = 0
+        self.Zo = 0
 
-    inlier_L = []
-    inlier_R = []
-    inlier_id_L = []
-    inlier_id_R = []
-    camera = Camera()
+        self.inlier_L = []
+        self.inlier_R = []
+        self.inlier_id_L = []
+        self.inlier_id_R = []
+        self.camera = Camera()
 
     def set_model(self, index: int, imgL_id: int, imgR_id: int, id_list: [], points: [], colors: []):
         self.id = index
@@ -224,37 +225,38 @@ class BlockModel:
         message_print("Create Model from Pair Models.")
 
         # Find the Number of feature matching
-        pairSize = 0
-        model_size = len(pair_model_list)
-        for i in range(1, model_size):
-            pairSize += model_size - i
+        pairSize = 0  # Set index for pair Size
+        model_size = len(pair_model_list)  # Take the size of the models
+        for i in range(1, model_size):  # for all indexes
+            pairSize += model_size - i  # solve the equation
 
-        pairCounter = 1
-        landmarkCounter = 0
-        pair_model_list_size = len(pair_model_list)
-        for m_index_L in range(0, pair_model_list_size - 1):
-            pm_L = pair_model_list[m_index_L]
-            for m_index_R in range(m_index_L + 1, pair_model_list_size):
-                pm_R = pair_model_list[m_index_R]
+        pairCounter = 1  # set a pair counter
+        landmarkCounter = 0  # set a landmark counter
+        pair_model_list_size = len(pair_model_list)  # find the size of pair model list
+        for m_index_L in range(0, pair_model_list_size - 1):  # for each model
+            pm_L = pair_model_list[m_index_L]  # take the left model
+            for m_index_R in range(m_index_L + 1, pair_model_list_size):  # and compare it with all other models
+                pm_R = pair_model_list[m_index_R]  # take the right model
 
-                pm_L_img_L_id = pm_L.imgL_id
-                pm_L_img_R_id = pm_L.imgR_id
-                pm_R_img_L_id = pm_R.imgL_id
-                pm_R_img_R_id = pm_R.imgR_id
+                pm_L_img_L_id = pm_L.imgL_id  # take the left image index of the left model
+                pm_L_img_R_id = pm_L.imgR_id  # take the right image index of the left model
+                pm_R_img_L_id = pm_R.imgL_id  # take the left image index of the right model
+                pm_R_img_R_id = pm_R.imgR_id  # take the right image index of the right model
 
-                img_L_L_name = pm_L.imgL_name
-                img_L_R_name = pm_L.imgR_name
-                img_R_L_name = pm_R.imgL_name
-                img_R_R_name = pm_R.imgR_name
+                img_L_L_name = pm_L.imgL_name  # take the left image name of the left model
+                img_L_R_name = pm_L.imgR_name  # take the right image name of the left model
+                img_R_L_name = pm_R.imgL_name  # take the left image name of the right model
+                img_R_R_name = pm_R.imgR_name  # take the right image name of the right model
 
+                # Debugging message lines
                 print("")
                 message = "( %d / " % pairCounter + "%d )" % pairSize
-                print_message(message)
+                message_print(message)
                 message = "Find transformation parameters for " + "(" + img_L_L_name + "-" + img_L_R_name + ")" + \
                           "(" + img_R_L_name + "-" + img_R_R_name + ")"
-                print_message(message)
+                message_print(message)
 
-                pm_id_list_tmp = []
+                pm_id_list_tmp = []  # create a temporary id list
 
                 if pm_L_img_L_id == pm_R_img_L_id:
                     for l_id in range(0, len(table_id_list[pm_L_img_L_id])):

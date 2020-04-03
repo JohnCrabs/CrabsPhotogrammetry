@@ -466,6 +466,9 @@
    </property>
   </action>
   <action name="actionCrabSFM">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>CrabSFM</string>
    </property>
