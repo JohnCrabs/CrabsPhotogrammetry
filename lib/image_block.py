@@ -212,12 +212,14 @@ class PairModel:
 
 
 class BlockModel:
-    landmark_ids = []
-    landmark_shown = []
-    landmark = []
-    landmark_colors = []
+    def __init__(self):
+        self.landmark_ids = []
+        self.landmark_points = []
+        self.landmark_count_duplicates = []
+        self.landmark_colors = []
 
-    def create_landmark_model(self, pair_model_list: [], table_id_list: []):
+    def b_model_create_landmark_model(self, pair_model_list: [], table_id_list: []):
+        # Debugging message lines
         print("")
         message_print("Create Model from Pair Models.")
 
@@ -365,7 +367,7 @@ class BlockModel:
                     export_as_ply(exp_points, exp_colors, exportName)
 
                 if landmarkCounter == 0:
-                    self.landmark = exp_points
+                    self.landmark_points = exp_points
                     self.landmark_colors = exp_colors
                     for i in range(0, len(self.landmark)):
                         self.landmark_shown.append(1)
@@ -824,4 +826,4 @@ class ImageBlock:
             matchCounter += 1  # increase the matchCounter
 
     def b_img_create_block_model(self):
-        self.block_model.create_landmark_model(self.pair_model, self.block_match_list)
+        self.block_model.b_model_create_landmark_model(self.pair_model, self.block_match_list)
