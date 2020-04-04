@@ -370,8 +370,10 @@ class BlockModel:
                 pm_R.rotate_translate_model(R, t)
                 exp_points = pm_R.points
                 exp_colors = pm_R.colors
-                model_with_same_left_image_points.append(exp_points.tolist())
-                model_with_same_left_image_colors.append(exp_colors.tolist())
+
+                for i in range(0, len(exp_points)):
+                    model_with_same_left_image_points.append(exp_points[i])
+                    model_with_same_left_image_colors.append(exp_colors[i])
                 # print(model_with_same_left_image_points)
                 # print(model_with_same_left_image_colors)
 

@@ -70,7 +70,7 @@ def export_as_ply(vertices, colors, filename):
     :param filename: The path to the file.ply
     :return: Nothing
     """
-    print(colors)
+    # print(colors)
     colors = colors.reshape(-1, 3)
     vertices = np.hstack([vertices.reshape(-1, 3), colors])
 
