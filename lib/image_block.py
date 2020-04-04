@@ -232,6 +232,7 @@ class BlockModel:
         # Find the Number of feature matching
         pairSize = 0  # Set index for pair Size
         model_size = len(pair_model_list)  # Take the size of the models
+        # print(model_size)
         for i in range(1, model_size):  # for all indexes
             pairSize += model_size - i  # solve the equation
 
@@ -240,6 +241,8 @@ class BlockModel:
         pair_model_list_size = len(pair_model_list)  # find the size of pair model list
         for m_index_L in range(0, pair_model_list_size - 1):  # for each model
             pm_L = pair_model_list[m_index_L]  # take the left model
+            model_with_same_left_image_points = []
+            model_with_same_left_image_colors = []
             for m_index_R in range(m_index_L + 1, pair_model_list_size):  # and compare it with all other models
                 pm_R = pair_model_list[m_index_R]  # take the right model
 
@@ -367,6 +370,11 @@ class BlockModel:
                 pm_R.rotate_translate_model(R, t)
                 exp_points = pm_R.points
                 exp_colors = pm_R.colors
+                model_with_same_left_image_points.append(exp_points.tolist())
+                model_with_same_left_image_colors.append(exp_colors.tolist())
+                # print(model_with_same_left_image_points)
+                # print(model_with_same_left_image_colors)
+
                 if exportCloud != "":
                     exportName = exportCloud + "final/" + img_R_L_name + "_" + img_R_R_name + "_R_t.ply"
                     message = "Export Rotate + Translate Pair Model as : " + exportName
@@ -392,7 +400,20 @@ class BlockModel:
                 """
 
                 pairCounter += 1
-
+            model_with_same_left_image_points = np.array(model_with_same_left_image_points)
+            model_with_same_left_image_colors = np.array(model_with_same_left_image_colors)
+            if len(model_with_same_left_image_points) != 0:
+                if exportCloud != "":
+                    exportName = exportCloud + pm_L.imgL_name + "_" + ".ply"
+                    message = "Export Rotate + Translate Pair Model as : " + exportName
+                    message_print(message)
+                    export_as_ply(model_with_same_left_image_points, model_with_same_left_image_colors, exportName)
+                else:
+                    exportCloud_tmp = "tmp_ply/base_left/"
+                    if not os.path.exists(exportCloud_tmp):
+                        os.mkdir(exportCloud_tmp)
+                    exportName = exportCloud_tmp + pm_L.imgL_name + "_" + ".ply"
+                    export_as_ply(model_with_same_left_image_points, model_with_same_left_image_colors, exportName)
 
 class ImageBlock:
     def __init__(self):
@@ -755,13 +776,12 @@ class ImageBlock:
             proj_mtrx_R_P = ProjectionMatrix()  # Create projection matrix object
             proj_mtrx_R_P.set_projection_matrix_from_pose(R, t, imgR.camera.mtrx)  # Set the projection matrix
 
-            if (imgR.info.id - imgL.info.id) == 1:  # Check if the images are sequential
-                imgR.img_set_starting_pose_matrix(pose_mtrx_R)  # Set the pose matrix to the right img
-                imgR.img_set_starting_projection_matrix(proj_mtrx_R_P)  # Set the projection matrix to the right img
+            # if (imgR.info.id - imgL.info.id) == 1:  # Check if the images are sequential
+            imgR.img_set_starting_pose_matrix(pose_mtrx_R)  # Set the pose matrix to the right img
+            imgR.img_set_starting_projection_matrix(proj_mtrx_R_P)  # Set the projection matrix to the right img
 
             landmark_debugging_list = []  # Create landmark list (for debugging)
             if poseVal > POSE_RATIO * g_p_size and match.is_good:  # check if we have good match points
-
 
                 # print("")
                 # print("pose_mtrx_L = \n", pose_mtrx_L_T)  # Uncomment for debug
