@@ -299,6 +299,7 @@ class BlockModel:
                                         # print(pm_L_pnt_index, pm_L_id, pm_R_pnt_index, pm_R_id)
                 else:
                     message_print("Cannot match pairs without same images.")
+                    pairCounter += 1
                     break
 
                 # print(debugging_test)
@@ -331,6 +332,7 @@ class BlockModel:
 
                 else:
                     message_print("Too few matching points. Cannot match these pairs")
+                    pairCounter += 1
                     break
 
                 message_print("Scale model " + img_R_L_name + "-" + img_R_R_name)
@@ -388,19 +390,6 @@ class BlockModel:
                         os.mkdir(exportCloud_tmp)
                     exportName = exportCloud_tmp + img_R_L_name + "_" + img_R_R_name + "_R_t.ply"
                     export_as_ply(exp_points, exp_colors, exportName)
-
-                """
-                if landmarkCounter == 0:
-                    self.landmark_points = exp_points
-                    self.landmark_colors = exp_colors
-                    for i in range(0, len(self.landmark)):
-                        self.landmark_shown.append(1)
-
-                    landmarkCounter += 1
-                else:
-                    pass
-                """
-
                 pairCounter += 1
             model_with_same_left_image_points = np.array(model_with_same_left_image_points)
             model_with_same_left_image_colors = np.array(model_with_same_left_image_colors)
